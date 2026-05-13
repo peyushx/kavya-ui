@@ -107,7 +107,6 @@ function FoldedLetterDetail({ onOpen }) {
       animate={{ scale: 1, opacity: 1, y: 0 }}
       exit={{ scale: 1.05, opacity: 0, y: -20, transition: { duration: 0.6, ease: 'easeIn' } }}
       transition={{ type: 'spring', damping: 18, stiffness: 90 }}
-      transition={{ type: 'spring', damping: 18, stiffness: 90 }}
       style={{
         position: 'relative',
         width: 'min(320px, 90vw)',

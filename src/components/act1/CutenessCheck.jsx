@@ -37,48 +37,63 @@ export default function CutenessCheck({ onNext }) {
   const [attempt, setAttempt] = useState(0);
   const [scanValue, setScanValue] = useState(0);
   const [screenFlash, setScreenFlash] = useState(false);
+  const [isHolding, setIsHolding] = useState(false);
+  const [frame, setFrame] = useState(0);
 
   const startScan = useCallback(() => {
-    if (phase !== 'idle') return;
+    if (phase !== 'idle' && phase !== 'fail') return;
+    if (phase === 'fail') {
+      setAttempt(prev => prev + 1);
+    }
+    setIsHolding(true);
     setPhase('scanning');
     setScanValue(0);
+    setFrame(0);
+  }, [phase]);
+
+  const stopScan = useCallback(() => {
+    if (phase === 'scanning') {
+      setIsHolding(false);
+      setPhase('idle');
+      setScanValue(0);
+      setFrame(0);
+    } else {
+      setIsHolding(false);
+    }
   }, [phase]);
 
   useEffect(() => {
-    if (phase !== 'scanning') return;
+    if (phase !== 'scanning' || !isHolding) return;
 
     const isLastAttempt = attempt >= failResponses.length;
     const scanDuration = isLastAttempt ? 55 : 28 + attempt * 4;
-    let frame = 0;
 
     const interval = setInterval(() => {
-      frame++;
-      const p = 1 - Math.pow(1 - frame / scanDuration, 3);
-      setScanValue(Math.min(Math.round(p * 100), 100));
+      setFrame(prev => {
+        const next = prev + 1;
+        const p = 1 - Math.pow(1 - next / scanDuration, 3);
+        setScanValue(Math.min(Math.round(p * 100), 100));
 
-      if (frame >= scanDuration) {
-        clearInterval(interval);
-
-        if (isLastAttempt) {
-          setScanValue(100);
-          setPhase('success');
-          // No auto-advance; let user click button
-        } else {
-          setScreenFlash(true);
-          setTimeout(() => setScreenFlash(false), 500);
-          setPhase('fail');
+        if (next >= scanDuration) {
+          clearInterval(interval);
+          if (isLastAttempt) {
+            setPhase('success');
+            setIsHolding(false);
+          } else {
+            setScreenFlash(true);
+            setTimeout(() => setScreenFlash(false), 500);
+            setPhase('fail');
+            setIsHolding(false);
+          }
         }
-      }
+        return next;
+      });
     }, 30);
 
     return () => clearInterval(interval);
-  }, [phase, attempt]);
+  }, [phase, attempt, isHolding]);
 
-  const retry = () => {
-    setAttempt(prev => prev + 1);
-    setPhase('idle');
-    setScanValue(0);
-  };
+  // retry is now handled within startScan for the hold mechanic
 
   const currentFail = failResponses[attempt] || failResponses[0];
 
@@ -160,8 +175,10 @@ export default function CutenessCheck({ onNext }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              onClick={phase === 'idle' ? startScan : phase === 'fail' ? retry : undefined}
-              style={{ cursor: phase === 'idle' || phase === 'fail' ? 'pointer' : 'default' }}
+              onPointerDown={startScan}
+              onPointerUp={stopScan}
+              onPointerLeave={stopScan}
+              style={{ cursor: phase === 'idle' || phase === 'fail' ? 'pointer' : 'default', touchAction: 'none' }}
             >
               {/* Scanning pulses */}
               {phase === 'scanning' && [0, 1, 2].map(i => (
@@ -267,7 +284,7 @@ export default function CutenessCheck({ onNext }) {
                   transition={{ duration: 2, repeat: Infinity }}
                   style={{ textTransform: 'uppercase', letterSpacing: '3px', fontSize: '10px', color: 'var(--text-muted)' }}
                 >
-                  {attempt === 0 ? 'tap to scan' : 'tap to retry'}
+                  {attempt === 0 ? 'hold to scan' : 'hold to retry'}
                 </motion.p>
               )}
 
@@ -278,7 +295,7 @@ export default function CutenessCheck({ onNext }) {
                   transition={{ duration: 2, repeat: Infinity }}
                   style={{ textTransform: 'uppercase', letterSpacing: '3px', fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}
                 >
-                  tap to try again
+                  hold to try again
                 </motion.p>
               )}
             </motion.div>
