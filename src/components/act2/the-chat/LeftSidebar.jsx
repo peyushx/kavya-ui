@@ -1,4 +1,4 @@
-import { ListPlus, MoreVertical, Search, Users } from 'lucide-react';
+import { ListPlus, MoreVertical, Search, Users, RotateCcw } from 'lucide-react';
 
 export default function LeftSidebar({
   isLight,
@@ -10,8 +10,23 @@ export default function LeftSidebar({
   isFavourite,
   mockChats,
   setView,
-  view
+  view,
+  onChatSelect
 }) {
+  const handleResetInvestigation = () => {
+    if (window.confirm("Are you sure you want to reset the investigation? This will lock the phone, reset typing attempts, and start the chapter over.")) {
+      localStorage.removeItem('kavvs_stalking_unlocked');
+      localStorage.removeItem('kavvs_typing_attempt');
+      localStorage.removeItem('kavvs_input_lock_state');
+      localStorage.removeItem('kavvs_attachment_tap_count');
+      localStorage.removeItem('kavvs_phone_call_logs');
+      localStorage.removeItem('kavvs_group_dp_index');
+      localStorage.removeItem('kavvs_group_name');
+      localStorage.removeItem('kavvs_is_favourite');
+      window.location.reload();
+    }
+  };
+
   return (
     <div style={{
       width: '300px',
@@ -32,7 +47,15 @@ export default function LeftSidebar({
         borderBottom: isLight ? '1px solid #cbd5e1' : '1px solid #222e35'
       }}>
         <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0, color: isLight ? '#111b21' : '#e9edef' }}>WhatsApp</h1>
-        <div style={{ display: 'flex', gap: '16px', color: isLight ? '#54656f' : '#aebac1' }}>
+        <div style={{ display: 'flex', gap: '14px', color: isLight ? '#54656f' : '#aebac1', alignItems: 'center' }}>
+          <RotateCcw 
+            size={18} 
+            style={{ cursor: 'pointer', transition: 'transform 0.2s ease' }} 
+            title="Reset Investigation" 
+            onClick={handleResetInvestigation}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'rotate(-45deg)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'rotate(0deg)'}
+          />
           <ListPlus size={20} style={{ cursor: 'pointer' }} />
           <MoreVertical size={20} style={{ cursor: 'pointer' }} />
         </div>
@@ -96,7 +119,12 @@ export default function LeftSidebar({
       </div>
 
       {/* Chats List */}
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div 
+        data-lenis-prevent
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+        style={{ flex: 1, overflowY: 'auto' }}
+      >
         {mockChats.filter(chat => {
           const matchesSearch = chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                 chat.message.toLowerCase().includes(searchQuery.toLowerCase());
@@ -108,7 +136,12 @@ export default function LeftSidebar({
         }).map((chat, idx) => (
           <div 
             key={idx} 
-            onClick={() => setView('chat')}
+            onClick={() => {
+              if (onChatSelect) {
+                onChatSelect(chat);
+              }
+              setView('chat');
+            }}
             style={{
               display: 'flex',
               padding: '12px 16px',

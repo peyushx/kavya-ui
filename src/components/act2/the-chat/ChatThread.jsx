@@ -22,7 +22,8 @@ export default function ChatThread({
   setView,
   view,
   setIsVideoCallActive,
-  typingToast
+  typingToast,
+  onSelectMember
 }) {
   const [attachmentTapCount, setAttachmentTapCount] = useState(() => {
     return Number(localStorage.getItem('kavvs_attachment_tap_count') || '0');
@@ -111,9 +112,9 @@ export default function ChatThread({
             <Users size={20} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: isLight ? '#111b21' : '#e9edef' }}>The Baddies 💅</h4>
+            <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: isLight ? '#111b21' : '#e9edef' }}>besties only 💀🫶</h4>
             <span style={{ fontSize: '11px', color: colors.dateText }}>
-              Pishu ✨, Riya 🧸, You...
+              Riya 🧸, Arjun 😎, Meera 💅, You 🫵
             </span>
           </div>
         </div>
@@ -143,16 +144,21 @@ export default function ChatThread({
       }} />
 
       {/* Chat Body */}
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        padding: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-        position: 'relative',
-        zIndex: 15
-      }}>
+      <div 
+        data-lenis-prevent
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          position: 'relative',
+          zIndex: 15
+        }}
+      >
         {/* Click here to get older messages banner */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -250,7 +256,12 @@ export default function ChatThread({
                   position: 'relative'
                 }}
               >
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: msg.senderColor, padding: '4px 6px' }}>
+                <div 
+                  onClick={() => onSelectMember && onSelectMember(msg.sender)}
+                  style={{ fontSize: '11px', fontWeight: 'bold', color: msg.senderColor, padding: '4px 6px', cursor: 'pointer' }}
+                  onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                  onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                >
                   {msg.sender}
                 </div>
                 <div style={{
@@ -299,7 +310,12 @@ export default function ChatThread({
               }}
             >
               {msg.isIncoming && (
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: msg.senderColor, paddingBottom: '2px' }}>
+                <div 
+                  onClick={() => onSelectMember && onSelectMember(msg.sender)}
+                  style={{ fontSize: '11px', fontWeight: 'bold', color: msg.senderColor, paddingBottom: '2px', cursor: 'pointer' }}
+                  onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                  onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                >
                   {msg.sender}
                 </div>
               )}

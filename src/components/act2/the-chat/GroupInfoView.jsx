@@ -5,7 +5,7 @@ import {
   LogOut, ThumbsDown, Edit2, AlertTriangle, Lock, ShieldAlert, Flag 
 } from 'lucide-react';
 
-export default function GroupInfoView({ colors, isLight, setView, onNext, isFavourite, setIsFavourite }) {
+export default function GroupInfoView({ colors, isLight, setView, onNext, isFavourite, setIsFavourite, onSelectMember }) {
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('besties only 💀🫶');
   const [showGalleryPicker, setShowGalleryPicker] = useState(false);
@@ -84,6 +84,9 @@ export default function GroupInfoView({ colors, isLight, setView, onNext, isFavo
       animate={{ width: '320px', opacity: 1 }}
       exit={{ width: 0, opacity: 0 }}
       transition={{ type: 'tween', duration: 0.2 }}
+      data-lenis-prevent
+      onWheel={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
       style={{
         width: '320px',
         height: '100%',
@@ -249,9 +252,22 @@ export default function GroupInfoView({ colors, isLight, setView, onNext, isFavo
           <div style={{ fontSize: '14.5px', color: isLight ? '#111b21' : '#e9edef' }}>Add member</div>
         </div>
 
-        {/* Members List Rendering */}
         {members.map((m, i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '12px 16px', borderTop: isLight ? '1px solid #f0f2f5' : '1px solid #222e35' }}>
+          <div 
+            key={i} 
+            onClick={() => onSelectMember && onSelectMember(m.name)}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '14px', 
+              padding: '12px 16px', 
+              borderTop: isLight ? '1px solid #f0f2f5' : '1px solid #222e35',
+              cursor: 'pointer',
+              transition: 'background 0.2s ease'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = isLight ? '#f0f2f5' : '#1f2c34'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+          >
             <div style={{ 
               width: '40px', 
               height: '40px', 
