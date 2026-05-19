@@ -664,3 +664,83 @@
         .trust-btn:hover {
           opacity: 0.8 !important;
         }
+
+        /* ============================================
+           MOBILE RESPONSIVE — Warm Theme
+           ============================================ */
+        @media (max-width: 480px) {
+          .lines-container {
+            padding: 0 16px;
+            min-height: 80px;
+          }
+
+          .line-system {
+            font-size: 18px;
+          }
+
+          .line-personal {
+            font-size: 22px;
+          }
+
+          .scan-ring {
+            width: 80px;
+            height: 80px;
+          }
+
+          .check-circle {
+            width: 80px;
+            height: 80px;
+          }
+
+          .ready-btn {
+            padding: 14px 36px;
+            font-size: 16px;
+            margin-top: 32px;
+          }
+
+          .broken-sun {
+            width: 250px;
+            height: 250px;
+            margin-left: -125px;
+          }
+
+          .verified-label {
+            font-size: 10px;
+            letter-spacing: 4px;
+          }
+
+          .scan-text {
+            font-size: 11px;
+            letter-spacing: 3px;
+          }
+
+          .scan-container {
+            gap: 24px;
+          }
+        }
+
+        @media (max-width: 375px) {
+          .line-system {
+            font-size: 16px;
+          }
+
+          .line-personal {
+            font-size: 20px;
+          }
+
+          .ready-btn {
+            padding: 12px 28px;
+            font-size: 15px;
+            margin-top: 24px;
+          }
+
+          .scan-ring {
+            width: 70px;
+            height: 70px;
+          }
+
+          .check-circle {
+            width: 70px;
+            height: 70px;
+          }
+        }

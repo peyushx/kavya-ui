@@ -269,19 +269,23 @@ const RainLandscape = () => (
       <ellipse cx="550" cy="260" rx="35" ry="6" fill="url(#puddle-grad)" />
 
       {/* Animated ripples */}
-      <motion.ellipse cx="350" cy="250" rx="8" ry="2" fill="none" stroke="rgba(150,200,255,0.2)" strokeWidth="0.5"
+      <motion.ellipse cx="350" cy="250" fill="none" stroke="rgba(150,200,255,0.2)" strokeWidth="0.5"
+        initial={{ rx: 8, ry: 2, opacity: 0.4 }}
         animate={{ rx: [8, 30], ry: [2, 6], opacity: [0.4, 0] }}
         transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
       />
-      <motion.ellipse cx="355" cy="248" rx="5" ry="1.5" fill="none" stroke="rgba(150,200,255,0.15)" strokeWidth="0.5"
+      <motion.ellipse cx="355" cy="248" fill="none" stroke="rgba(150,200,255,0.15)" strokeWidth="0.5"
+        initial={{ rx: 5, ry: 1.5, opacity: 0.3 }}
         animate={{ rx: [5, 22], ry: [1.5, 4], opacity: [0.3, 0] }}
         transition={{ duration: 1.8, repeat: Infinity, delay: 0.8, repeatDelay: 1.5 }}
       />
-      <motion.ellipse cx="750" cy="240" rx="6" ry="1.5" fill="none" stroke="rgba(150,200,255,0.2)" strokeWidth="0.5"
+      <motion.ellipse cx="750" cy="240" fill="none" stroke="rgba(150,200,255,0.2)" strokeWidth="0.5"
+        initial={{ rx: 6, ry: 1.5, opacity: 0.35 }}
         animate={{ rx: [6, 25], ry: [1.5, 5], opacity: [0.35, 0] }}
         transition={{ duration: 2.2, repeat: Infinity, delay: 0.5, repeatDelay: 2 }}
       />
-      <motion.ellipse cx="552" cy="259" rx="4" ry="1" fill="none" stroke="rgba(150,200,255,0.15)" strokeWidth="0.5"
+      <motion.ellipse cx="552" cy="259" fill="none" stroke="rgba(150,200,255,0.15)" strokeWidth="0.5"
+        initial={{ rx: 4, ry: 1, opacity: 0.3 }}
         animate={{ rx: [4, 18], ry: [1, 3.5], opacity: [0.3, 0] }}
         transition={{ duration: 1.6, repeat: Infinity, delay: 1.2, repeatDelay: 1.8 }}
       />
@@ -497,8 +501,9 @@ const BoatPerson = ({ rescueStatus }) => {
 
           {/* Small ripples around boat */}
           <motion.ellipse 
-            cx="90" cy="80" rx="40" ry="5" 
-            fill="none" stroke="white" strokeWidth="1" opacity="0.2"
+            cx="90" cy="80" 
+            fill="none" stroke="white" strokeWidth="1"
+            initial={{ rx: 40, ry: 5, opacity: 0.2 }}
             animate={{ rx: [40, 55], opacity: [0.2, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
@@ -538,7 +543,7 @@ const TypewriterText = ({ text, delay = 0, speed = 0.03, style }) => {
   );
 };
 
-const CreditsScreen = ({ onRestart }) => {
+const CreditsScreen = ({ onRestart, onNext }) => {
   const credits = [
     { role: "Main Character Energy", name: "The User (You 💅)" },
     { role: "Girl With Pony", name: "Miss 55kg (A survivor tbh ✨)" },
@@ -600,6 +605,34 @@ const CreditsScreen = ({ onRestart }) => {
         
         <h2 style={{ color: '#a7f3d0', fontSize: '36px', marginTop: '100px', fontStyle: 'italic' }}>thanks for playing BADDIEE 💖</h2>
       </motion.div>
+
+      {/* Continue to Next Chapter Button */}
+      <motion.button
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 6, duration: 2 }}
+        onClick={onNext}
+        style={{
+          position: 'absolute',
+          bottom: '140px',
+          padding: '16px 40px',
+          borderRadius: '30px',
+          background: 'rgba(255,255,255,0.1)',
+          color: '#a7f3d0',
+          border: '1.5px solid rgba(167,243,208,0.4)',
+          cursor: 'pointer',
+          fontFamily: "'Outfit', sans-serif",
+          fontSize: '18px',
+          fontWeight: 600,
+          transition: 'all 0.3s',
+          backdropFilter: 'blur(10px)',
+          zIndex: 301
+        }}
+        onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(167,243,208,0.2)'; e.currentTarget.style.borderColor = 'rgba(167,243,208,0.8)'; }}
+        onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'rgba(167,243,208,0.4)'; }}
+      >
+        continue to next chapter 📱✨
+      </motion.button>
 
       <motion.button
         initial={{ opacity: 0, y: 20 }}
@@ -1004,7 +1037,7 @@ export default function RainDrowning({ theme, onNext }) {
       {showCredits && <CreditsScreen onRestart={() => {
         localStorage.clear();
         window.location.reload();
-      }} />}
+      }} onNext={onNext} />}
 
       <style dangerouslySetInnerHTML={{ __html: `
         .rain-css {

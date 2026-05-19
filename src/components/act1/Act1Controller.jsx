@@ -28,10 +28,27 @@ const screenTransition = {
   ease: [0.16, 1, 0.3, 1],
 };
 
-export default function Act1Controller({ onComplete, isHeartbroken, onHeartbreak, isSkyFalling, onSkyFalling, theme }) {
-  const [step, setStep] = useState(() => {
-    return parseInt(localStorage.getItem('kavvs_act1Step')) || 0;
+export default function Act1Controller({ onComplete, isHeartbroken, onHeartbreak, isSkyFalling, onSkyFalling, theme, externalStep, onStepChange }) {
+  const [step, setStepInternal] = useState(() => {
+    return (externalStep ?? parseInt(localStorage.getItem('kavvs_act1Step'))) || 0;
   });
+
+  // Sync with external step changes (from ChapterNav)
+  useEffect(() => {
+    if (externalStep !== undefined && externalStep !== step) {
+      setStepInternal(externalStep);
+    }
+  }, [externalStep]);
+
+  // Notify parent of step changes
+  const setStep = (valOrFn) => {
+    setStepInternal(prev => {
+      const next = typeof valOrFn === 'function' ? valOrFn(prev) : valOrFn;
+      localStorage.setItem('kavvs_act1Step', next);
+      if (onStepChange) onStepChange(next);
+      return next;
+    });
+  };
 
   useEffect(() => {
     localStorage.setItem('kavvs_act1Step', step);

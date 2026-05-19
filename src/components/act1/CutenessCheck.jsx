@@ -149,8 +149,8 @@ export default function CutenessCheck({ onNext }) {
             exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
             transition={{ duration: 0.5 }}
           >
-            {/* Title container with fixed height so text changes don't shift the scanner */}
-            <div style={{ height: '80px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', marginBottom: '36px' }}>
+            {/* Title container with min-height so text changes don't shift the scanner */}
+            <div style={{ minHeight: '60px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', marginBottom: 'clamp(20px, 5vw, 36px)', padding: '0 8px' }}>
               <AnimatePresence mode="wait">
                 <motion.h2
                   key={phase + attempt}

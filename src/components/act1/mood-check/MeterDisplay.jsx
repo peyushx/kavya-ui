@@ -37,7 +37,7 @@ export default function MeterDisplay({
           y: isBroken ? -10 : 0
         }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        style={{ marginBottom: '40px', fontSize: '24px', minHeight: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
+        style={{ marginBottom: 'clamp(20px, 5vw, 40px)', fontSize: 'clamp(18px, 5vw, 24px)', minHeight: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
       >
         {isScanning ? (
           <>
@@ -240,7 +240,7 @@ export default function MeterDisplay({
               {!hasGloves ? (
                 <motion.div key="error-msg" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <p className="line-personal" style={{
-                    fontSize: '24px',
+                    fontSize: 'clamp(18px, 5vw, 24px)',
                     color: 'var(--text-primary)',
                     margin: '0 0 6px 0'
                   }}>
@@ -251,13 +251,13 @@ export default function MeterDisplay({
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.5 }}
                     className="line-personal"
-                    style={{ fontSize: '17px', color: 'var(--accent-warm)', margin: 0 }}
+                    style={{ fontSize: 'clamp(14px, 4vw, 17px)', color: 'var(--accent-warm)', margin: 0 }}
                   >
                     help me clean this up? 🥺
                   </motion.p>
                 </motion.div>
               ) : (
-                <motion.p key="drag-msg" initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} className="line-personal" style={{ fontSize: '17px', color: 'var(--text-secondary)', margin: 0 }}>
+                <motion.p key="drag-msg" initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} className="line-personal" style={{ fontSize: 'clamp(14px, 4vw, 17px)', color: 'var(--text-secondary)', margin: 0 }}>
                   drag the pieces away ↓
                 </motion.p>
               )}

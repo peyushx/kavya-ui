@@ -11,6 +11,7 @@ import OpeningSky from './components/act2/OpeningSky';
 import EmotionJar from './components/act2/EmotionJar';
 import BaddieResume from './components/act2/BaddieResume';
 import RainDrowning from './components/act2/RainDrowning';
+import TheChat from './components/act2/TheChat';
 
 
 import './warm-theme.css';
@@ -26,6 +27,7 @@ gsap.defaults({
 
 import ThemeToggle from './components/ThemeToggle';
 import AtmosphericOverlay from './components/AtmosphericOverlay';
+import ChapterNav from './components/ChapterNav';
 
 export default function App() {
   const [currentAct, setCurrentAct] = useState(() => {
@@ -41,6 +43,10 @@ export default function App() {
   
   const [act2Phase, setAct2Phase] = useState(() => {
     return localStorage.getItem('kavvs_act2Phase') || 'opening';
+  });
+
+  const [act1Step, setAct1Step] = useState(() => {
+    return parseInt(localStorage.getItem('kavvs_act1Step')) || 0;
   });
 
 
@@ -64,6 +70,19 @@ export default function App() {
   const handleReset = () => {
     localStorage.clear();
     window.location.reload();
+  };
+
+  // Chapter navigation handler
+  const handleChapterNavigate = (act, step, phase) => {
+    if (act === 'act1') {
+      setCurrentAct('act1');
+      setAct1Step(step);
+      localStorage.setItem('kavvs_act1Step', step);
+    } else if (act === 'act2') {
+      setCurrentAct('act2');
+      setAct2Phase(phase);
+      localStorage.setItem('kavvs_act2Phase', phase);
+    }
   };
 
   // Initialize Lenis only when we're past Act 1 (Act 2+ uses scrolling)
@@ -115,6 +134,13 @@ export default function App() {
         reset
       </button>
 
+      <ChapterNav
+        currentAct={currentAct}
+        act1Step={act1Step}
+        act2Phase={act2Phase}
+        onNavigate={handleChapterNavigate}
+      />
+
       {/* Act 1 — click-based, no scroll */}
         {currentAct === 'act1' && (
           <Act1Controller 
@@ -124,6 +150,8 @@ export default function App() {
             isSkyFalling={isSkyFalling}
             onSkyFalling={setIsSkyFalling}
             theme={theme}
+            externalStep={act1Step}
+            onStepChange={setAct1Step}
           />
         )}
 
@@ -145,7 +173,11 @@ export default function App() {
           )}
 
           {act2Phase === 'rain' && (
-            <RainDrowning theme={theme} onNext={() => setAct2Phase('detective')} />
+            <RainDrowning theme={theme} onNext={() => setAct2Phase('chat')} />
+          )}
+
+          {act2Phase === 'chat' && (
+            <TheChat theme={theme} onNext={() => setAct2Phase('detective')} />
           )}
         </div>
       )}
