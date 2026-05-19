@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import Lenis from '@studio-freight/lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -12,7 +12,7 @@ import EmotionJar from './components/act2/EmotionJar';
 import BaddieResume from './components/act2/BaddieResume';
 import RainDrowning from './components/act2/RainDrowning';
 import TheChat from './components/act2/TheChat';
-
+import TheDetective from './components/act2/TheDetective';
 
 import './warm-theme.css';
 import './index.css';
@@ -30,6 +30,7 @@ import AtmosphericOverlay from './components/AtmosphericOverlay';
 import ChapterNav from './components/ChapterNav';
 
 export default function App() {
+ 
   const [currentAct, setCurrentAct] = useState(() => {
     return localStorage.getItem('kavvs_currentAct') || 'act1';
   });
@@ -178,6 +179,10 @@ export default function App() {
 
           {act2Phase === 'chat' && (
             <TheChat theme={theme} onNext={() => setAct2Phase('detective')} />
+          )}
+
+          {act2Phase === 'detective' && (
+            <TheDetective theme={theme} onNext={() => alert('Act 2 complete! Preparing Act 3...')} />
           )}
         </div>
       )}

@@ -9,9 +9,22 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
   const [activeGroupPreview, setActiveGroupPreview] = useState(null);
   const [narratorComment, setNarratorComment] = useState(null);
 
+  React.useEffect(() => {
+    const cleanName = memberName?.trim();
+    if (cleanName && ['Jiya 🧸', 'Arjun 😎', 'Meera 💅'].includes(cleanName)) {
+      const saved = localStorage.getItem('kavvs_explored_suspects');
+      const explored = saved ? JSON.parse(saved) : [];
+      if (!explored.includes(cleanName)) {
+        const next = [...explored, cleanName];
+        localStorage.setItem('kavvs_explored_suspects', JSON.stringify(next));
+        window.dispatchEvent(new Event('kavvs_explored_changed'));
+      }
+    }
+  }, [memberName]);
+
   // Upgraded Profiles Database containing rich chat logs and foreshadowings
   const profiles = {
-    'Riya 🧸': {
+    'Jiya 🧸': {
       avatar: '🧸',
       avatarColor: '#eb5528',
       about: 'overthinking is my cardio 🏃‍♀️',
@@ -19,38 +32,38 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
       lastSeen: '3:02 AM',
       media: '14 photos, 6 videos, 0 documents',
       starred: [
-        { sender: 'Riya 🧸', text: 'i love you guys sm 🥺' },
-        { sender: 'Meera 💅', text: "riya you're not clingy you're just loving" },
+        { sender: 'Jiya 🧸', text: 'i love you guys sm 🥺' },
+        { sender: 'Meera 💅', text: "jiya you're not clingy you're just loving" },
         { sender: 'Arjun 😎', text: 'group trip when??' }
       ],
       groups: [
         { 
           name: 'besties only 💀🫶', 
-          desc: 'Riya, Arjun, Meera, You 🫵', 
+          desc: 'Jiya, Arjun, Meera, You 🫵', 
           membersCount: 4,
           isUntappable: true 
         },
         { 
           name: 'Family Group 🏠', 
-          desc: 'Mom, Dad, Riya...', 
+          desc: 'Mom, Dad, Jiya...', 
           membersCount: 3,
-          narratorComment: "good morning is a feeling. riya's dad is a philosopher 💀",
+          narratorComment: "good morning is a feeling. jiya's dad is a philosopher 💀",
           messages: [
-            { sender: "Riya's Mom", text: "beta aaj dinner kya banana hai", time: "8:45 PM" },
-            { sender: "Riya", text: "mummy i told you na pasta", time: "8:46 PM" },
-            { sender: "Riya's Mom", text: "pasta vasta nahi khaate hum. dal bana do", time: "8:48 PM" },
-            { sender: "Riya", text: "😭😭😭", time: "8:49 PM" },
-            { sender: "Riya's Dad", text: "Roses and Minion Good Morning photo", time: "9:00 PM", type: "good_morning_img" },
-            { sender: "Riya", text: "papa it's 9pm", time: "9:01 PM" },
-            { sender: "Riya's Dad", text: "good morning is a feeling beta. not a time.", time: "9:03 PM" },
-            { sender: "Riya's Mom", text: "your father is right. also call me you never call", time: "9:05 PM" },
-            { sender: "Riya", text: "mummy i literally live with you", time: "9:06 PM" },
-            { sender: "Riya's Mom", text: "still. call sometime.", time: "9:08 PM" }
+            { sender: "Jiya's Mom", text: "beta aaj dinner kya banana hai", time: "8:45 PM" },
+            { sender: "Jiya", text: "mummy i told you na pasta", time: "8:46 PM" },
+            { sender: "Jiya's Mom", text: "pasta vasta nahi khaate hum. dal bana do", time: "8:48 PM" },
+            { sender: "Jiya", text: "😭😭😭", time: "8:49 PM" },
+            { sender: "Jiya's Dad", text: "Roses and Minion Good Morning photo", time: "9:00 PM", type: "good_morning_img" },
+            { sender: "Jiya", text: "papa it's 9pm", time: "9:01 PM" },
+            { sender: "Jiya's Dad", text: "good morning is a feeling beta. not a time.", time: "9:03 PM" },
+            { sender: "Jiya's Mom", text: "your father is right. also call me you never call", time: "9:05 PM" },
+            { sender: "Jiya", text: "mummy i literally live with you", time: "9:06 PM" },
+            { sender: "Jiya's Mom", text: "still. call sometime.", time: "9:08 PM" }
           ]
         },
         { 
           name: 'College Notes Sharing 📚', 
-          desc: 'Riya, Random guy, Girl...', 
+          desc: 'Jiya, Random guy, Girl...', 
           membersCount: 34,
           narratorComment: "43 pages. color coded. extra references. 3 weeks. one 'thanks.' 😭",
           messages: [
@@ -58,10 +71,10 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
             { sender: "Girl", text: "bro exam is literally tomorrow", time: "2:12 PM" },
             { sender: "Random guy", text: "that's why i'm asking NOW", time: "2:13 PM" },
             { sender: "Girl", text: "💀💀💀", time: "2:15 PM" },
-            { sender: "Riya", text: "wait i have them give me 5 mins", time: "2:18 PM" },
-            { sender: "Riya", text: "Unit_4_Complete_Notes_Highlighted_Color_Coded.pdf", time: "2:23 PM", type: "pdf_file" },
-            { sender: "Riya", text: "i also added extra references at the end just in case 🥺", time: "2:24 PM" },
-            { sender: "Riya", text: "also guys please don't share these outside the group 🙏 i spent 3 weeks making them", time: "2:25 PM" },
+            { sender: "Jiya", text: "wait i have them give me 5 mins", time: "2:18 PM" },
+            { sender: "Jiya", text: "Unit_4_Complete_Notes_Highlighted_Color_Coded.pdf", time: "2:23 PM", type: "pdf_file" },
+            { sender: "Jiya", text: "i also added extra references at the end just in case 🥺", time: "2:24 PM" },
+            { sender: "Jiya", text: "also guys please don't share these outside the group 🙏 i spent 3 weeks making them", time: "2:25 PM" },
             { sender: "Random guy", text: "thanks", time: "2:30 PM" }
           ]
         }
@@ -98,7 +111,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
       groups: [
         { 
           name: 'besties only 💀🫶', 
-          desc: 'Riya, Arjun, Meera, You 🫵', 
+          desc: 'Jiya, Arjun, Meera, You 🫵', 
           membersCount: 4,
           isUntappable: true 
         },
@@ -183,7 +196,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
       lastSeen: '11:58 PM',
       media: '47 photos, 23 videos, 3 documents 📄⚠️',
       starred: [
-        { sender: 'Riya 🧸', text: 'meera you look like a literal model omg' },
+        { sender: 'Jiya 🧸', text: 'meera you look like a literal model omg' },
         { sender: 'Pishu ✨', text: 'did you hear what happened in the library??' },
         { sender: 'You 🫵', text: "don't tell arjun i said this but..." },
         { sender: 'Meera 💅', text: '*archived chat log compliments*' }
@@ -191,26 +204,26 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
       groups: [
         { 
           name: 'besties only 💀🫶', 
-          desc: 'Riya, Arjun, Meera, You 🫵', 
+          desc: 'Jiya, Arjun, Meera, You 🫵', 
           membersCount: 4,
           isUntappable: true 
         },
         { 
           name: 'Girls Night 💃', 
-          desc: 'Meera, Priya, Ananya...', 
+          desc: 'Meera, Pjiya, Ananya...', 
           membersCount: 5,
           narratorComment: "reading comprehension is free 💀",
           messages: [
             { sender: "Meera", text: "ok saturday girls night. no boyfriends. no excuses. no cancelling.", time: "6:00 PM" },
-            { sender: "Priya", text: "i'm in!!", time: "6:02 PM" },
+            { sender: "Pjiya", text: "i'm in!!", time: "6:02 PM" },
             { sender: "Ananya", text: "can i bring my boyfriend", time: "6:05 PM" },
             { sender: "Meera", text: "it's called GIRLS night. reading comprehension is free ananya.", time: "6:08 PM" },
             { sender: "Ananya", text: "he'll just sit in the corner", time: "6:10 PM" },
             { sender: "Meera", text: "the corner of GIRLS night?? no ❌", time: "6:12 PM" },
-            { sender: "Priya", text: "lmaooo", time: "6:13 PM" },
+            { sender: "Pjiya", text: "lmaooo", time: "6:13 PM" },
             { sender: "Ananya", text: "fine 🙄", time: "6:15 PM" },
-            { sender: "Meera", text: "also dress code is cute tops. no pajamas. i'm looking at you priya.", time: "6:18 PM" },
-            { sender: "Priya", text: "IT WAS ONE TIME", time: "6:20 PM" },
+            { sender: "Meera", text: "also dress code is cute tops. no pajamas. i'm looking at you pjiya.", time: "6:18 PM" },
+            { sender: "Pjiya", text: "IT WAS ONE TIME", time: "6:20 PM" },
             { sender: "Meera", text: "one time too many babes 💅", time: "6:22 PM" }
           ]
         },
@@ -220,7 +233,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           membersCount: 4,
           narratorComment: "pinky promise 🤞 lasted 48 hours. impressive for meera honestly",
           messages: [
-            { sender: "Meera", text: "ok so apparently rahul from marketing is dating priya from HR", time: "11:30 AM" },
+            { sender: "Meera", text: "ok so apparently rahul from marketing is dating pjiya from HR", time: "11:30 AM" },
             { sender: "Sneha", text: "NO WAY", time: "11:32 AM" },
             { sender: "Tanya", text: "how do you know this", time: "11:33 AM" },
             { sender: "Meera", text: "i have my sources 😌", time: "11:35 AM" },
@@ -303,7 +316,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
       groups: [
         { 
           name: 'besties only 💀🫶', 
-          desc: 'Riya, Arjun, Meera, You 🫵', 
+          desc: 'Jiya, Arjun, Meera, You 🫵', 
           membersCount: 4,
           isUntappable: true 
         }
@@ -316,11 +329,62 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
         </div>
       ),
       isYou: true
+    },
+    'Pishu ✨': {
+      avatar: '🕵️‍♂️',
+      avatarColor: '#ef4444',
+      about: 'the narrator is watching. everything is connected. 🎭✨',
+      phone: '+91 •••••• 0001 (secure narrator feed)',
+      lastSeen: 'online 🟢',
+      media: '23 recovered chat logs, 1 audio feedback loop 🔍',
+      starred: [
+        { sender: 'Pishu ✨', text: "ok you've done your research. now let's hear what they have to say." },
+        { sender: 'Pishu ✨', text: "choose wisely. or don't. won't matter in a second 💀" }
+      ],
+      groups: [
+        { 
+          name: 'besties only 💀🫶', 
+          desc: 'Jiya, Arjun, Meera, You 🫵', 
+          membersCount: 4,
+          isUntappable: true 
+        }
+      ],
+      notifications: 'Muted forever',
+      isLoud: false,
+      customDP: (
+        <div style={{ 
+          width: '100%', 
+          height: '100%', 
+          background: 'radial-gradient(circle, #311 0%, #070709 100%)', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          color: '#ef4444',
+          position: 'relative'
+        }}>
+          <span style={{ fontSize: '72px' }}>🕵️‍♂️</span>
+          <div style={{ 
+            position: 'absolute', 
+            bottom: '8px', 
+            background: 'rgba(239, 68, 68, 0.2)', 
+            border: '1px solid rgba(239, 68, 68, 0.4)', 
+            padding: '2px 10px', 
+            borderRadius: '8px', 
+            color: '#ef4444', 
+            fontSize: '9px', 
+            fontWeight: 'bold',
+            letterSpacing: '1px'
+          }}>
+            THE NARRATOR
+          </div>
+        </div>
+      ),
+      isNarrator: true
     }
   };
 
   // Find profile details
-  const profileName = memberName.replace(' Riya 🧸', 'Riya 🧸').replace(' Arjun 😎', 'Arjun 😎').replace(' Meera 💅', 'Meera 💅').replace(' You 🫵', 'You 🫵');
+  const profileName = memberName.replace(' Jiya 🧸', 'Jiya 🧸').replace(' Arjun 😎', 'Arjun 😎').replace(' Meera 💅', 'Meera 💅').replace(' You 🫵', 'You 🫵').replace(' Pishu ✨', 'Pishu ✨');
   const profile = profiles[profileName] || profiles['You 🫵'];
 
   return (
@@ -484,24 +548,29 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           )}
         </div>
 
-        {/* Groups in Common */}
+        {/* Chat History Recovered 🔍 */}
         <div style={{
           background: isLight ? '#ffffff' : '#111b21',
           borderBottom: isLight ? '8px solid #f0f2f5' : '8px solid #0c1317'
         }}>
-          <div style={{ padding: '16px 16px 8px 16px', fontSize: '12.5px', color: colors.dateText, fontWeight: 600 }}>
-            Groups in common ({profile.groups.length})
+          <div style={{ padding: '16px 16px 4px 16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span style={{ fontSize: '13.5px', fontWeight: 600, color: isLight ? '#111b21' : '#e9edef' }}>
+              Chat History Recovered 🔍
+            </span>
+            <span style={{ fontSize: '11px', color: colors.dateText, fontStyle: 'italic' }}>
+              the investigation pulled chat logs from all suspects. read carefully.
+            </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', marginTop: '8px' }}>
             {profile.groups.map((group, i) => {
               const isClickable = !group.isUntappable;
               return (
                 <div 
                   key={i} 
                   onClick={() => {
-                    if (isClickable && onSelectGroup) {
-                      onSelectGroup(group.name);
+                    if (isClickable) {
+                      setActiveGroupPreview(group);
                     }
                   }}
                   style={{ 
@@ -524,8 +593,8 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
                     }
                   }}
                 >
-                  <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', color: 'white' }}>
-                    👥
+                  <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: isLight ? '#fee2e2' : '#2d1616', border: `1px solid ${isLight ? '#fca5a5' : '#7f1d1d'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', color: '#ef4444' }}>
+                    📁
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                     <span style={{ fontSize: '13.5px', fontWeight: 600, color: isLight ? '#111b21' : '#e9edef', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{group.name}</span>
@@ -550,6 +619,18 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
               only 1 group in common. interesting.
             </div>
           )}
+          {profile.isNarrator && (
+            <div style={{
+              padding: '12px 16px 16px 16px',
+              fontSize: '11.5px',
+              color: '#ef4444',
+              fontStyle: 'italic',
+              fontWeight: 600,
+              borderTop: isLight ? '1px solid #f0f2f5' : '1px solid #222e35'
+            }}>
+              wait, why is the narrator registered as a participant inside this chat group?! 🕵️‍♂️💀
+            </div>
+          )}
         </div>
 
         {/* Encryption Warning (Crucial BOMBSHELL clue for YOU 🫵) */}
@@ -566,6 +647,10 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           {profile.isYou ? (
             <span style={{ fontSize: '11.5px', color: '#ef4444', lineHeight: '1.4', fontWeight: 600, border: '1px dashed rgba(239,68,68,0.3)', padding: '6px 12px', borderRadius: '8px' }}>
               Encryption: Messages are end-to-end encrypted. Except the ones you forwarded 📤
+            </span>
+          ) : profile.isNarrator ? (
+            <span style={{ fontSize: '11.5px', color: '#ef4444', lineHeight: '1.4', fontWeight: 600, border: '1px dashed rgba(239,68,68,0.3)', padding: '6px 12px', borderRadius: '8px' }}>
+              Warning: You are viewing a secure system line. Pishu has full administrative read rights. 🚨🗝️
             </span>
           ) : (
             <span style={{ fontSize: '10.5px', color: colors.dateText, lineHeight: '1.4' }}>
@@ -586,7 +671,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
             style={{
               position: 'absolute',
               inset: 0,
-              background: isLight ? '#efeae2' : '#0b141a', // WhatsApp chat screen background
+              background: isLight ? '#fdf6e2' : '#14120f', // WhatsApp chat screen background with amber/evidence tint
               zIndex: 50,
               display: 'flex',
               flexDirection: 'column',
@@ -596,12 +681,12 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
             {/* Overlay Header */}
             <div style={{
               padding: '12px 16px',
-              background: isLight ? '#f0f2f5' : '#202c33',
+              background: isLight ? '#fcf1d8' : '#1d1914',
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
               color: isLight ? '#111b21' : '#e9edef',
-              borderBottom: isLight ? '1px solid #cbd5e1' : '1px solid #222e35',
+              borderBottom: isLight ? '1px solid #e7d3aa' : '1px solid #2e261f',
               boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
             }}>
               <div 
@@ -651,6 +736,26 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
                 backgroundImage: 'radial-gradient(circle at 10px 10px, #000 1px, transparent 1px)',
                 backgroundSize: '20px 20px'
               }} />
+
+              {/* Evidence File watermark */}
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%) rotate(-15deg)',
+                fontSize: '28px',
+                fontWeight: 'bold',
+                color: isLight ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.12)',
+                letterSpacing: '3px',
+                border: `3px dashed ${isLight ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.12)'}`,
+                padding: '6px 12px',
+                borderRadius: '6px',
+                pointerEvents: 'none',
+                zIndex: 1,
+                whiteSpace: 'nowrap'
+              }}>
+                EVIDENCE FILE
+              </div>
 
               {activeGroupPreview.messages.map((m, idx) => {
                 if (m.type === 'system') {
@@ -771,6 +876,24 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
                   </div>
                 );
               })}
+            </div>
+
+            {/* Bottom thin evidence log status bar */}
+            <div style={{
+              padding: '10px 16px',
+              background: isLight ? '#fef2f2' : '#1a1313',
+              borderTop: isLight ? '1px solid #fca5a5' : '1px solid #581c1c',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              color: '#ef4444',
+              fontSize: '11.5px',
+              fontWeight: 600,
+              fontStyle: 'italic',
+              zIndex: 10
+            }}>
+              📁 evidence log · read only
             </div>
           </motion.div>
         )}

@@ -562,7 +562,7 @@ const CreditsScreen = ({ onRestart, onNext }) => {
     { role: "The Rising Tension", name: "FloodWater.svg (Literally drowning us 🌊)" },
     { role: "Physics & Gravity", name: "Framer Motion (Carrying this whole project 🚀)" },
     { role: "The Math", name: "Literally not mathing 📉" },
-    { role: "Director & Dev", name: "Piyush (he/him) 💻💖" }
+    { role: "Director & Dev", name: "Pishu (he/him) 💻💖" }
   ];
 
   return (

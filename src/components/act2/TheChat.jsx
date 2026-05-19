@@ -54,21 +54,21 @@ function Fireflies({ count = 25, theme }) {
 export default function TheChat({ theme, onNext }) {
   const isLight = theme === 'light';
 
-  const isStalkingUnlocked = localStorage.getItem('kavvs_stalking_unlocked') === 'true';
+  const phonePickedUpSaved = localStorage.getItem('kavvs_phone_picked_up') === 'true';
 
   // State flags for full-screen atmospheric reveal sequence (matching RainDrowning.tsx style)
-  const [introActive, setIntroActive] = useState(!isStalkingUnlocked);
+  const [introActive, setIntroActive] = useState(!phonePickedUpSaved);
   const [isWalking, setIsWalking] = useState(false);
 
   // Cinematic Multistage Scene State System
-  const [sceneStage, setSceneStage] = useState(isStalkingUnlocked ? 'phone-active' : 'intro'); // 'intro', 'walk-to-center', 'stop-and-drop', 'walk-to-right', 'phone-active'
-  const [phoneDropped, setPhoneDropped] = useState(isStalkingUnlocked);
+  const [sceneStage, setSceneStage] = useState(phonePickedUpSaved ? 'phone-active' : 'intro'); // 'intro', 'walk-to-center', 'stop-and-drop', 'walk-to-right', 'phone-active'
+  const [phoneDropped, setPhoneDropped] = useState(phonePickedUpSaved);
   
-  const [isPickedUp, setIsPickedUp] = useState(isStalkingUnlocked);
-  const [isWokenUp, setIsWokenUp] = useState(isStalkingUnlocked);
-  const [isUnlocked, setIsUnlocked] = useState(isStalkingUnlocked);
-  const [chatProgress, setChatProgress] = useState(isStalkingUnlocked ? 3 : 0);
-  const [messages, setMessages] = useState(isStalkingUnlocked ? [
+  const [isPickedUp, setIsPickedUp] = useState(phonePickedUpSaved);
+  const [isWokenUp, setIsWokenUp] = useState(phonePickedUpSaved);
+  const [isUnlocked, setIsUnlocked] = useState(phonePickedUpSaved);
+  const [chatProgress, setChatProgress] = useState(phonePickedUpSaved ? 3 : 0);
+  const [messages, setMessages] = useState(phonePickedUpSaved ? [
     { sender: 'pishu', text: "someone in this group screenshotted jiya's message and leaked it. find who did it baddiee", id: 0 },
     { sender: 'pishu', text: "Check whatsapp group", id: 1 },
     { sender: 'system', text: "Act 2 Complete. Time to investigate the leak.", id: 2 }
@@ -406,6 +406,7 @@ export default function TheChat({ theme, onNext }) {
               if (!isPickedUp && sceneStage === 'phone-active') {
                 setIsPickedUp(true);
                 setIsWokenUp(true);
+                localStorage.setItem('kavvs_phone_picked_up', 'true');
               }
             }}
             style={{

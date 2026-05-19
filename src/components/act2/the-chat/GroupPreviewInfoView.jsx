@@ -1,16 +1,18 @@
+import { motion } from 'framer-motion';
+import { ArrowLeft, Lock, Heart } from 'lucide-react';
 
-export function GroupPreviewInfoView({ activeGroup, isLight, colors, onClose, onSelectMember }) {
+export function GroupPreviewInfoView({ activeGroup, isLight, colors, onClose, onSelectMember, favourites, onToggleFavourite }) {
   const getGroupMembers = (groupId) => {
     switch (groupId) {
       case 'family':
         return [
-          { name: "Riya's Mom", role: 'Group Creator / Admin', avatar: '👩', color: '#10b981' },
-          { name: "Riya's Dad", role: 'Minion image sender', avatar: '👨', color: '#f59e0b' },
-          { name: 'Riya 🧸', role: 'Daughter / Dal maker', avatar: '🧸', color: '#eb5528' }
+          { name: "Jiya's Mom", role: 'Group Creator / Admin', avatar: '👩', color: '#10b981' },
+          { name: "Jiya's Dad", role: 'Minion image sender', avatar: '👨', color: '#f59e0b' },
+          { name: 'Jiya 🧸', role: 'Daughter / Dal maker', avatar: '🧸', color: '#eb5528' }
         ];
       case 'notes':
         return [
-          { name: 'Riya 🧸', role: 'Group Creator / Admin', avatar: '🧸', color: '#eb5528' },
+          { name: 'Jiya 🧸', role: 'Group Creator / Admin', avatar: '🧸', color: '#eb5528' },
           { name: 'Random guy', role: 'Active note-beggar', avatar: '🧑', color: '#3b82f6' },
           { name: 'Girl', role: 'Stressed student', avatar: '👩', color: '#ca8a04' },
           { name: '31 other classmates...', role: 'Silent readers', avatar: '👥', color: '#64748b', isFiller: true }
@@ -38,7 +40,7 @@ export function GroupPreviewInfoView({ activeGroup, isLight, colors, onClose, on
       case 'girlsnight':
         return [
           { name: 'Meera 💅', role: 'Group Creator / Admin', avatar: '💅', color: '#ec4899' },
-          { name: 'Priya', role: 'Pajama rule violator', avatar: '👩', color: '#db2777' },
+          { name: 'Pjiya', role: 'Pajama rule violator', avatar: '👩', color: '#db2777' },
           { name: 'Ananya', role: 'Corner boyfriend sponsor', avatar: '👩', color: '#ca8a04' },
           { name: '2 others...', role: 'Night out planners', avatar: '👥', color: '#94a3b8', isFiller: true }
         ];
@@ -58,7 +60,7 @@ export function GroupPreviewInfoView({ activeGroup, isLight, colors, onClose, on
       case 'birthday':
         return [
           { name: 'Meera 💅', role: 'Group Creator / Admin', avatar: '💅', color: '#ec4899' },
-          { name: 'Priya', role: 'Left on read', avatar: '👩', color: '#64748b' },
+          { name: 'Pjiya', role: 'Left on read', avatar: '👩', color: '#64748b' },
           { name: 'Ananya', role: 'Left on read', avatar: '👩', color: '#64748b' },
           { name: 'Sneha', role: 'Left on read', avatar: '👩', color: '#64748b' },
           { name: 'You 🫵', role: 'Left on read', avatar: '🫵', color: '#10b981' }
@@ -155,6 +157,38 @@ export function GroupPreviewInfoView({ activeGroup, isLight, colors, onClose, on
         </p>
       </div>
 
+      {/* Options */}
+      {favourites && onToggleFavourite && (
+        <div style={{
+          borderBottom: isLight ? '8px solid #f0f2f5' : '8px solid #0c1317',
+          padding: '6px 0',
+          background: isLight ? '#ffffff' : '#111b21',
+        }}>
+          <div 
+            onClick={() => onToggleFavourite(activeGroup.id)}
+            style={{ 
+              padding: '12px 16px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '20px', 
+              cursor: 'pointer', 
+              color: isLight ? '#111b21' : '#e9edef' 
+            }}
+          >
+            <span style={{ 
+              opacity: 0.6, 
+              display: 'flex', 
+              color: favourites.includes(activeGroup.id) ? '#ef4444' : 'inherit' 
+            }}>
+              <Heart size={20} fill={favourites.includes(activeGroup.id) ? '#ef4444' : 'none'} />
+            </span>
+            <span style={{ fontSize: '13.5px', fontWeight: 500 }}>
+              {favourites.includes(activeGroup.id) ? 'Remove from favourites' : 'Add to favourites'}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Members List */}
       <div style={{
         background: isLight ? '#ffffff' : '#111b21',
@@ -166,7 +200,7 @@ export function GroupPreviewInfoView({ activeGroup, isLight, colors, onClose, on
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {groupMembers.map((m, i) => {
-            const isSelectable = !m.isFiller && (m.name.includes('Riya') || m.name.includes('Arjun') || m.name.includes('Meera') || m.name.includes('You'));
+            const isSelectable = !m.isFiller && (m.name.includes('Jiya') || m.name.includes('Arjun') || m.name.includes('Meera') || m.name.includes('You'));
             return (
               <div 
                 key={i} 

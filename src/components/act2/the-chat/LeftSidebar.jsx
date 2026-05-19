@@ -7,7 +7,7 @@ export default function LeftSidebar({
   setSearchQuery,
   activeFilter,
   setActiveFilter,
-  isFavourite,
+  favourites,
   mockChats,
   setView,
   view,
@@ -22,7 +22,19 @@ export default function LeftSidebar({
       localStorage.removeItem('kavvs_phone_call_logs');
       localStorage.removeItem('kavvs_group_dp_index');
       localStorage.removeItem('kavvs_group_name');
-      localStorage.removeItem('kavvs_is_favourite');
+      localStorage.removeItem('kavvs_favourites');
+      localStorage.removeItem('kavvs_explored_suspects');
+      localStorage.removeItem('kavvs_completed_dms');
+      localStorage.removeItem('kavvs_narrator_dm_alert_triggered');
+      localStorage.removeItem('kavvs_whatsapp_history');
+      localStorage.removeItem('kavvs_pishu_messages');
+      localStorage.removeItem('kavvs_pishu_unread');
+      localStorage.removeItem('kavvs_dm_history_Jiya 🧸');
+      localStorage.removeItem('kavvs_dm_history_Arjun 😎');
+      localStorage.removeItem('kavvs_dm_history_Meera 💅');
+      localStorage.removeItem('kavvs_dm_step_Jiya 🧸');
+      localStorage.removeItem('kavvs_dm_step_Arjun 😎');
+      localStorage.removeItem('kavvs_dm_step_Meera 💅');
       window.location.reload();
     }
   };
@@ -129,8 +141,8 @@ export default function LeftSidebar({
           const matchesSearch = chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                 chat.message.toLowerCase().includes(searchQuery.toLowerCase());
           if (!matchesSearch) return false;
-          if (activeFilter === 'Unread') return false; 
-          if (activeFilter === 'Favourites') return isFavourite; 
+          if (activeFilter === 'Unread') return chat.unread; 
+          if (activeFilter === 'Favourites') return favourites && favourites.includes(chat.id); 
           if (activeFilter === 'Groups') return chat.isGroup;
           return true;
         }).map((chat, idx) => (
@@ -174,10 +186,37 @@ export default function LeftSidebar({
                   {chat.time}
                 </span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '12px', color: colors.dateText, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', flex: 1, marginRight: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2px' }}>
+                <span style={{ 
+                  fontSize: '12.5px', 
+                  color: chat.unread ? (isLight ? '#111b21' : '#e9edef') : colors.dateText, 
+                  fontWeight: chat.unread ? 500 : 400,
+                  textOverflow: 'ellipsis', 
+                  overflow: 'hidden', 
+                  whiteSpace: 'nowrap', 
+                  flex: 1, 
+                  marginRight: '8px' 
+                }}>
                   {chat.message}
                 </span>
+                {chat.unread && (
+                  <div style={{
+                    background: '#00a884',
+                    color: '#ffffff',
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    borderRadius: '50%',
+                    minWidth: '18px',
+                    height: '18px',
+                    padding: '0 4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    1
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -187,7 +226,7 @@ export default function LeftSidebar({
           const matchesSearch = chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                 chat.message.toLowerCase().includes(searchQuery.toLowerCase());
           if (!matchesSearch) return false;
-          if (activeFilter === 'Unread') return false;
+          if (activeFilter === 'Unread') return chat.unread;
           if (activeFilter === 'Favourites') return isFavourite;
           if (activeFilter === 'Groups') return chat.isGroup;
           return true;

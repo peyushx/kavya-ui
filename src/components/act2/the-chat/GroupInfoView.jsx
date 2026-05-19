@@ -5,7 +5,7 @@ import {
   LogOut, ThumbsDown, Edit2, AlertTriangle, Lock, ShieldAlert, Flag 
 } from 'lucide-react';
 
-export default function GroupInfoView({ colors, isLight, setView, onNext, isFavourite, setIsFavourite, onSelectMember }) {
+export default function GroupInfoView({ colors, isLight, setView, onNext, isFavourite, setIsFavourite, onSelectMember, completedDms = [] }) {
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('besties only 💀🫶');
   const [showGalleryPicker, setShowGalleryPicker] = useState(false);
@@ -49,7 +49,7 @@ export default function GroupInfoView({ colors, isLight, setView, onNext, isFavo
 
   const members = [
     { 
-      name: 'Riya 🧸', 
+      name: 'Jiya 🧸', 
       status: 'sends 47 messages per hour', 
       avatar: '🧸', 
       color: '#eb5528', 
@@ -329,13 +329,115 @@ export default function GroupInfoView({ colors, isLight, setView, onNext, isFavo
             {isFavourite ? 'Remove from favourites' : 'Add to favourites'}
           </span>
         </div>
-        <div 
-          onClick={() => triggerToast("lists are locked during active investigations 🔒")}
-          style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '20px', cursor: 'pointer', color: isLight ? '#111b21' : '#e9edef' }}
-        >
-          <span style={{ opacity: 0.6, display: 'flex' }}><ListPlus size={20} /></span>
-          <span style={{ fontSize: '13.5px', fontWeight: 500 }}>Add to list</span>
+      </div>
+
+      {/* Act Progression Interrogation Status Button */}
+      <div style={{
+        padding: '16px',
+        borderBottom: isLight ? '8px solid #f0f2f5' : '8px solid #0c1317',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '12px'
+      }}>
+        <div style={{ fontSize: '11px', color: colors.dateText, textTransform: 'uppercase', letterSpacing: '0.8px', fontWeight: 600, textAlign: 'center' }}>
+          Interrogation Progression Status
         </div>
+        
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', margin: '4px 0' }}>
+          {['Jiya 🧸', 'Arjun 😎', 'Meera 💅'].map((suspect) => {
+            const isDone = completedDms.includes(suspect);
+            const avatar = suspect.split(' ')[1];
+            return (
+              <div 
+                key={suspect} 
+                title={suspect}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: isDone ? '#00a884' : (isLight ? '#cbd5e1' : '#2d383f'),
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '18px',
+                  border: isDone ? '2px solid #00a884' : '2px dashed #64748b',
+                  opacity: isDone ? 1 : 0.5,
+                  position: 'relative'
+                }}
+              >
+                {avatar}
+                {isDone && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-4px',
+                    right: '-4px',
+                    background: '#00a884',
+                    color: 'white',
+                    fontSize: '8px',
+                    borderRadius: '50%',
+                    width: '12px',
+                    height: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 'bold',
+                    border: '1px solid white'
+                  }}>
+                    ✓
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {completedDms.length === 3 ? (
+          <motion.button
+            whileHover={{ scale: 1.03, boxShadow: '0 0 15px rgba(16, 185, 129, 0.4)' }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => onNext && onNext()}
+            style={{
+              width: '100%',
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '20px',
+              padding: '12px 0',
+              fontWeight: 800,
+              fontSize: '13px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 10px rgba(16, 185, 129, 0.25)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              letterSpacing: '0.5px'
+            }}
+          >
+            <span>PROCEED TO VERDICT</span>
+            <span>➔</span>
+          </motion.button>
+        ) : (
+          <div style={{
+            width: '100%',
+            background: isLight ? '#f1f5f9' : '#1e293b',
+            color: isLight ? '#64748b' : '#94a3b8',
+            borderRadius: '20px',
+            padding: '12px 0',
+            fontWeight: 700,
+            fontSize: '12.5px',
+            textAlign: 'center',
+            border: isLight ? '1px dashed #cbd5e1' : '1px dashed #334155',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px'
+          }}>
+            <Lock size={12} />
+            <span>🔐 COMPLETE {3 - completedDms.length} MORE DMs</span>
+          </div>
+        )}
       </div>
 
       {/* Danger Options */}

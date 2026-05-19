@@ -1,3 +1,5 @@
+import { ArrowLeft } from 'lucide-react';
+
 export default function GroupPreviewThread({ activeGroup, isLight, colors, onReturn, setNarratorComment, setView, view }) {
   return (
     <div style={{
@@ -119,7 +121,7 @@ export default function GroupPreviewThread({ activeGroup, isLight, colors, onRet
             );
           }
 
-          const isOutgoing = m.sender === 'You' || m.sender === 'Riya' || m.sender === 'Arjun' || m.sender === 'Meera';
+          const isOutgoing = m.sender === 'You' || m.sender === 'Jiya' || m.sender === 'Arjun' || m.sender === 'Meera';
           const senderColor = isOutgoing 
             ? (isLight ? '#075E54' : '#00a884')
             : (isLight ? '#ca8a04' : '#f59e0b');
@@ -222,7 +224,7 @@ export default function GroupPreviewThread({ activeGroup, isLight, colors, onRet
         borderTop: isLight ? '1px solid #cbd5e1' : '1px solid #222e35'
       }}>
         <span style={{ fontSize: '12.5px', color: colors.dateText, fontStyle: 'italic', fontWeight: 500 }}>
-          Preview Only · Only group administrators can send messages.
+          Preview Only · As you're just stalking
         </span>
       </div>
     </div>

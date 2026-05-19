@@ -200,7 +200,7 @@ export default function SyncDialogs({
             </h4>
           </div>
           <p style={{ margin: '0 0 16px 0', fontSize: '13.5px', color: '#cbd5e1', lineHeight: '1.6' }}>
-            "Whoa! abort mission, Sherlock! Riya's router might be struggling to keep her video camera spinning, but her chat's cyber-defenses are apparently locked tight. Let's not trigger a security warning. What's already in this chat has enough juicy leaks to solve the crime. Keep it cool and use your stalker board! 💅💀"
+            "Whoa! abort mission, Sherlock! Jiya's router might be struggling to keep her video camera spinning, but her chat's cyber-defenses are apparently locked tight. Let's not trigger a security warning. What's already in this chat has enough juicy leaks to solve the crime. Keep it cool and use your stalker board! 💅💀"
           </p>
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <button

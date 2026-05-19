@@ -23,7 +23,13 @@ export default function ChatThread({
   view,
   setIsVideoCallActive,
   typingToast,
-  onSelectMember
+  onSelectMember,
+  exploredSuspects = [],
+  completedDms = [],
+  onStartSuspectDm,
+  activeChatId = 'besties',
+  verdictOptions,
+  onVerdictSelect
 }) {
   const [attachmentTapCount, setAttachmentTapCount] = useState(() => {
     return Number(localStorage.getItem('kavvs_attachment_tap_count') || '0');
@@ -96,39 +102,53 @@ export default function ChatThread({
         }}
       >
         <div 
-          onClick={() => setView(view === 'info' ? 'chat' : 'info')}
-          style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+          onClick={() => {
+            if (activeChatId !== 'pishu') {
+              setView(view === 'info' ? 'chat' : 'info');
+            }
+          }}
+          style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: activeChatId === 'pishu' ? 'default' : 'pointer' }}
         >
           <div style={{
             width: '38px',
             height: '38px',
             borderRadius: '50%',
-            background: '#64748b',
+            background: activeChatId === 'pishu' ? 'rgba(239, 68, 68, 0.1)' : '#64748b',
+            border: activeChatId === 'pishu' ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#ffffff'
+            fontSize: activeChatId === 'pishu' ? '18px' : 'inherit',
+            color: activeChatId === 'pishu' ? '#ef4444' : '#ffffff'
           }}>
-            <Users size={20} />
+            {activeChatId === 'pishu' ? '🕵️‍♂️' : <Users size={20} />}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: isLight ? '#111b21' : '#e9edef' }}>besties only 💀🫶</h4>
+            <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: isLight ? '#111b21' : '#e9edef' }}>
+              {activeChatId === 'pishu' ? 'Pishu' : 'besties only 💀🫶'}
+            </h4>
             <span style={{ fontSize: '11px', color: colors.dateText }}>
-              Riya 🧸, Arjun 😎, Meera 💅, You 🫵
+              {activeChatId === 'pishu' ? 'online · secure narrator line' : 'Jiya 🧸, Arjun 😎, Meera 💅, You 🫵'}
             </span>
           </div>
         </div>
 
         <div style={{ display: 'flex', gap: '20px', color: isLight ? '#54656f' : '#aebac1', alignItems: 'center' }}>
-          <Video 
-            size={20} 
-            style={{ cursor: 'pointer' }} 
-            onClick={() => setIsVideoCallActive(true)}
-          />
+          {activeChatId !== 'pishu' && (
+            <Video 
+              size={20} 
+              style={{ cursor: 'pointer' }} 
+              onClick={() => setIsVideoCallActive(true)}
+            />
+          )}
           <Search 
             size={20} 
             style={{ cursor: 'pointer' }} 
-            onClick={() => setView(view === 'info' ? 'chat' : 'info')}
+            onClick={() => {
+              if (activeChatId !== 'pishu') {
+                setView(view === 'info' ? 'chat' : 'info');
+              }
+            }}
           />
         </div>
       </div>
@@ -160,39 +180,41 @@ export default function ChatThread({
         }}
       >
         {/* Click here to get older messages banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          onClick={handleShowSyncError}
-          style={{
-            alignSelf: 'center',
-            background: isLight ? 'rgba(0, 0, 0, 0.05)' : '#202c33',
-            border: isLight ? '1px solid rgba(0,0,0,0.03)' : '1px solid rgba(255,255,255,0.03)',
-            padding: '8px 24px',
-            borderRadius: '8px',
-            fontSize: '12px',
-            color: isLight ? '#54656f' : '#8696a0',
-            cursor: 'pointer',
-            textAlign: 'center',
-            boxShadow: '0 1px 1px rgba(0,0,0,0.05)',
-            transition: 'all 0.2s ease',
-            fontFamily: "'Outfit', sans-serif",
-            marginBottom: '6px',
-            marginTop: '4px',
-            maxWidth: '95%'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = isLight ? 'rgba(0, 0, 0, 0.08)' : '#2a3942';
-            e.currentTarget.style.transform = 'scale(1.02)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = isLight ? 'rgba(0, 0, 0, 0.05)' : '#202c33';
-            e.currentTarget.style.transform = 'scale(1)';
-          }}
-        >
-          Click here to get older messages from your phone.
-        </motion.div>
+        {activeChatId !== 'pishu' && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            onClick={handleShowSyncError}
+            style={{
+              alignSelf: 'center',
+              background: isLight ? 'rgba(0, 0, 0, 0.05)' : '#202c33',
+              border: isLight ? '1px solid rgba(0,0,0,0.03)' : '1px solid rgba(255,255,255,0.03)',
+              padding: '8px 24px',
+              borderRadius: '8px',
+              fontSize: '12px',
+              color: isLight ? '#54656f' : '#8696a0',
+              cursor: 'pointer',
+              textAlign: 'center',
+              boxShadow: '0 1px 1px rgba(0,0,0,0.05)',
+              transition: 'all 0.2s ease',
+              fontFamily: "'Outfit', sans-serif",
+              marginBottom: '6px',
+              marginTop: '4px',
+              maxWidth: '95%'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = isLight ? 'rgba(0, 0, 0, 0.08)' : '#2a3942';
+              e.currentTarget.style.transform = 'scale(1.02)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = isLight ? 'rgba(0, 0, 0, 0.05)' : '#202c33';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            Click here to get older messages from your phone.
+          </motion.div>
+        )}
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -1040,102 +1062,252 @@ export default function ChatThread({
       </AnimatePresence>
 
       {/* Input Bar */}
-      <form 
-        onSubmit={handleTypeSendSubmit}
-        style={{
-          padding: '8px 16px',
+      {verdictOptions ? (
+        <div style={{
+          padding: '16px 20px',
           background: isLight ? '#f0f2f5' : '#202c33',
           display: 'flex',
-          alignItems: 'center',
+          flexDirection: 'column',
           gap: '12px',
           zIndex: 20,
-          animation: isShakingInput ? 'shakeInputBar 0.5s ease-in-out' : 'none',
-          borderTop: isLight ? '1px solid #e9edef' : '1px solid #222e35'
-        }}
-      >
-        <Smile size={22} color={isLight ? '#54656f' : '#8696a0'} style={{ cursor: 'pointer' }} />
-        <motion.div
-          onClick={handlePaperclipClick}
-          animate={isWigglingPaperclip ? { rotate: [0, -25, 25, -25, 25, 0] } : {}}
-          transition={{ duration: 0.4 }}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-        >
-          <Paperclip size={22} color={isLight ? '#54656f' : '#8696a0'} />
-        </motion.div>
+          borderTop: isLight ? '1px solid #cbd5e1' : '1px solid #222e35',
+          fontFamily: "'Outfit', sans-serif"
+        }}>
+          <span style={{ fontSize: '11px', color: '#ef4444', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            SELECT WHO LEAKED IT 💬
+          </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {verdictOptions.map((opt) => (
+              <motion.button
+                key={opt}
+                whileHover={{ scale: 1.01, backgroundColor: isLight ? '#ffffff' : '#2a3942' }}
+                whileTap={{ scale: 0.99 }}
+                onClick={() => onVerdictSelect && onVerdictSelect(opt)}
+                style={{
+                  width: '100%',
+                  background: isLight ? '#ffffff' : '#1f2c34',
+                  border: isLight ? '1px solid #cbd5e1' : '1px solid #2d383f',
+                  borderRadius: '12px',
+                  padding: '12px 14px',
+                  textAlign: 'left',
+                  color: isLight ? '#111b21' : '#e9edef',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                }}
+              >
+                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: opt.includes('Jiya') ? '#eb5528' : opt.includes('Arjun') ? '#64748b' : '#ec4899', flexShrink: 0 }} />
+                <span style={{ flex: 1 }}>{opt}</span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      ) : activeChatId === 'pishu' ? (
         <div 
-          onClick={() => {
-            if (inputLockedState === 'revoked') {
-              showTypingToast("typing privileges revoked 🔒 you lost them. you did this to yourself.");
-            }
-          }}
           style={{
-            flex: 1,
-            background: isLight ? '#ffffff' : (inputLockedState === 'revoked' ? '#182229' : '#2a3942'),
-            borderRadius: '8px',
-            padding: '8px 12px',
+            padding: '16px 20px',
+            background: isLight ? '#f0f2f5' : '#202c33',
             display: 'flex',
             alignItems: 'center',
-            cursor: inputLockedState === 'revoked' ? 'not-allowed' : 'text',
-            border: inputLockedState === 'revoked' ? '1px solid rgba(239, 68, 68, 0.15)' : 'none',
-            opacity: inputLockedState === 'revoked' ? 0.75 : 1,
-            transition: 'all 0.2s ease'
+            justifyContent: 'center',
+            gap: '8px',
+            zIndex: 20,
+            borderTop: isLight ? '1px solid #cbd5e1' : '1px solid #222e35',
+            color: colors.dateText,
+            fontStyle: 'italic',
+            fontSize: '12.5px',
+            fontFamily: "'Outfit', sans-serif"
           }}
         >
-          {inputLockedState === 'revoked' && (
-            <Lock size={14} color="#ef4444" style={{ marginRight: '8px' }} />
-          )}
-          <input 
-            type="text" 
-            placeholder={inputLockedState === 'revoked' ? "typing privileges revoked" : "Type a message"} 
-            value={inputText}
-            onChange={(e) => {
-              if (inputLockedState !== 'revoked') {
-                setInputText(e.target.value);
-              }
-            }}
-            disabled={inputLockedState === 'revoked'}
-            style={{
-              border: 'none',
-              background: 'transparent',
-              fontSize: '14px',
-              color: inputLockedState === 'revoked' ? '#ef4444' : (isLight ? '#111b21' : '#e9edef'),
-              outline: 'none',
-              width: '100%',
-              cursor: inputLockedState === 'revoked' ? 'not-allowed' : 'text'
-            }} 
-          />
+          <Lock size={13} />
+          <span>🔒 secure narrator line · read only</span>
         </div>
-        {inputText.trim() ? (
-          <button 
-            type="submit"
-            style={{
-              background: 'transparent',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#00a884'
-            }}
+      ) : exploredSuspects.length === 3 && completedDms.length < 3 ? (
+        <div 
+          style={{
+            padding: '16px 20px',
+            background: isLight ? '#f0f2f5' : '#202c33',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px',
+            zIndex: 20,
+            borderTop: isLight ? '1px solid #cbd5e1' : '1px solid #222e35',
+            fontFamily: "'Outfit', sans-serif"
+          }}
+        >
+          <span style={{ fontSize: '11px', color: colors.dateText, textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+            💬 suspects ready for private interrogation DMs:
+          </span>
+          
+          <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', width: '100%', padding: '4px 0' }}>
+            {['Jiya 🧸', 'Arjun 😎', 'Meera 💅'].map((suspect) => {
+              const isDone = completedDms.includes(suspect);
+              const cleanName = suspect.split(' ')[0];
+              const avatar = suspect.split(' ')[1];
+              const borderCol = suspect.includes('Jiya') ? '#eb5528' : suspect.includes('Arjun') ? '#64748b' : '#ec4899';
+              
+              return (
+                <motion.div
+                  key={suspect}
+                  whileHover={{ scale: isDone ? 1 : 1.08 }}
+                  whileTap={{ scale: isDone ? 1 : 0.95 }}
+                  onClick={() => !isDone && onStartSuspectDm && onStartSuspectDm(suspect)}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    cursor: isDone ? 'default' : 'pointer',
+                    position: 'relative',
+                    opacity: isDone ? 0.45 : 1,
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '50%',
+                    background: isLight ? '#ffffff' : '#2a3942',
+                    border: `2.5px solid ${borderCol}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '28px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
+                    position: 'relative'
+                  }}>
+                    {avatar}
+                    {isDone && (
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '-2px',
+                        right: '-2px',
+                        width: '18px',
+                        height: '18px',
+                        borderRadius: '50%',
+                        background: '#00a884',
+                        color: 'white',
+                        fontSize: '11px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 'bold',
+                        border: '1.5px solid white'
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                  </div>
+                  <span style={{ fontSize: '11.5px', fontWeight: 600, marginTop: '6px', color: isLight ? '#111b21' : '#e9edef' }}>
+                    {cleanName}
+                  </span>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <form 
+          onSubmit={handleTypeSendSubmit}
+          style={{
+            padding: '8px 16px',
+            background: isLight ? '#f0f2f5' : '#202c33',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            zIndex: 20,
+            animation: isShakingInput ? 'shakeInputBar 0.5s ease-in-out' : 'none',
+            borderTop: isLight ? '1px solid #e9edef' : '1px solid #222e35'
+          }}
+        >
+          <Smile size={22} color={isLight ? '#54656f' : '#8696a0'} style={{ cursor: 'pointer' }} />
+          <motion.div
+            onClick={handlePaperclipClick}
+            animate={isWigglingPaperclip ? { rotate: [0, -25, 25, -25, 25, 0] } : {}}
+            transition={{ duration: 0.4 }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
           >
-            <Send size={22} />
-          </button>
-        ) : (
-          <Mic 
-            size={22} 
-            color={isLight ? '#54656f' : '#8696a0'} 
-            style={{ cursor: 'pointer' }}
+            <Paperclip size={22} color={isLight ? '#54656f' : '#8696a0'} />
+          </motion.div>
+          <div 
             onClick={() => {
               if (inputLockedState === 'revoked') {
                 showTypingToast("typing privileges revoked 🔒 you lost them. you did this to yourself.");
-              } else {
-                showTypingToast("did the narrator allow voice messages? absolutely not 🎤❌");
               }
             }}
-          />
-        )}
-      </form>
+            style={{
+              flex: 1,
+              background: isLight ? '#ffffff' : (inputLockedState === 'revoked' ? '#182229' : '#2a3942'),
+              borderRadius: '8px',
+              padding: '8px 12px',
+              display: 'flex',
+              alignItems: 'center',
+              cursor: inputLockedState === 'revoked' ? 'not-allowed' : 'text',
+              border: inputLockedState === 'revoked' ? '1px solid rgba(239, 68, 68, 0.15)' : 'none',
+              opacity: inputLockedState === 'revoked' ? 0.75 : 1,
+              transition: 'all 0.2s ease'
+            }}
+          >
+            {inputLockedState === 'revoked' && (
+              <Lock size={14} color="#ef4444" style={{ marginRight: '8px' }} />
+            )}
+            <input 
+              type="text" 
+              placeholder={inputLockedState === 'revoked' ? "typing privileges revoked" : "Type a message"} 
+              value={inputText}
+              onChange={(e) => {
+                if (inputLockedState !== 'revoked') {
+                  setInputText(e.target.value);
+                }
+              }}
+              disabled={inputLockedState === 'revoked'}
+              style={{
+                border: 'none',
+                background: 'transparent',
+                fontSize: '14px',
+                color: inputLockedState === 'revoked' ? '#ef4444' : (isLight ? '#111b21' : '#e9edef'),
+                outline: 'none',
+                width: '100%',
+                cursor: inputLockedState === 'revoked' ? 'not-allowed' : 'text'
+              }} 
+            />
+          </div>
+          {inputText.trim() ? (
+            <button 
+              type="submit"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#00a884'
+              }}
+            >
+              <Send size={22} />
+            </button>
+          ) : (
+            <Mic 
+              size={22} 
+              color={isLight ? '#54656f' : '#8696a0'} 
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                if (inputLockedState === 'revoked') {
+                  showTypingToast("typing privileges revoked 🔒 you lost them. you did this to yourself.");
+                } else {
+                  showTypingToast("did the narrator allow voice messages? absolutely not 🎤❌");
+                }
+              }}
+            />
+          )}
+        </form>
+      )}
 
       {/* Typing Toast Popup */}
       <AnimatePresence>

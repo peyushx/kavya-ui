@@ -201,6 +201,7 @@ function PhoneInterface({
                   onDrag={(event, info) => {
                     if (info.point.x > 380 || info.offset.x >= 190) {
                       setIsUnlocked(true);
+                      localStorage.setItem('kavvs_phone_picked_up', 'true');
                     }
                   }}
                   style={{

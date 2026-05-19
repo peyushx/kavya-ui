@@ -13,8 +13,8 @@ export default function VideoCallScreen({ isLight, onClose }) {
   };
 
   // Interrogation States
-  const [interrogationType, setInterrogationType] = useState(null); // 'riya', 'arjun_cat', 'arjun_vacuum', 'arjun_spotify', 'meera'
-  const [riyaDropped, setRiyaDropped] = useState(false);
+  const [interrogationType, setInterrogationType] = useState(null); // 'jiya', 'arjun_cat', 'arjun_vacuum', 'arjun_spotify', 'meera'
+  const [jiyaDropped, setJiyaDropped] = useState(false);
   const [arjunClicks, setArjunClicks] = useState(0);
   const [meeraClicks, setMeeraClicks] = useState(0);
   const [meeraIntensity, setMeeraIntensity] = useState(1);
@@ -35,13 +35,13 @@ export default function VideoCallScreen({ isLight, onClose }) {
   };
 
   const isConnecting = callTime < 3;
-  const isRiyaFrozen = !riyaDropped && ((callTime >= 7 && callTime < 11) || (callTime >= 24 && callTime < 28));
+  const isJiyaFrozen = !jiyaDropped && ((callTime >= 7 && callTime < 11) || (callTime >= 24 && callTime < 28));
   const hasMeeraJoined = callTime >= 10;
   const hasArjunJoined = callTime >= 14;
 
   // Climax Exit Timings
   const isArjunLeft = callTime >= 34;
-  const isRiyaLeft = callTime >= 38;
+  const isJiyaLeft = callTime >= 38;
   const isMeeraLeft = callTime >= 42;
 
   useEffect(() => {
@@ -51,12 +51,12 @@ export default function VideoCallScreen({ isLight, onClose }) {
   }, [callTime, narratorSlide]);
 
   // Interrogation Trigger Handlers (Blocked if Climax has started at callTime >= 30)
-  const handleRiyaClick = () => {
-    if (isConnecting || isRiyaFrozen || riyaDropped || interrogationType || callTime >= 30) return;
-    setRiyaDropped(true);
-    setInterrogationType('riya');
+  const handleJiyaClick = () => {
+    if (isConnecting || isJiyaFrozen || jiyaDropped || interrogationType || callTime >= 30) return;
+    setJiyaDropped(true);
+    setInterrogationType('jiya');
     setTimeout(() => {
-      setRiyaDropped(false);
+      setJiyaDropped(false);
       setInterrogationType(null);
     }, 5000);
   };
@@ -118,10 +118,10 @@ export default function VideoCallScreen({ isLight, onClose }) {
       return 'Arjun 😎: "Oh shoot, she walked in! I gotta go, panic! Bye guys!"';
     }
     if (callTime >= 35 && callTime < 38) {
-      return 'Riya 🧸: "Wait my router is literally smoking... hello?? guy--"';
+      return 'Jiya 🧸: "Wait my router is literally smoking... hello?? guy--"';
     }
     if (callTime >= 38 && callTime < 39) {
-      return 'Narrator: Riya\'s WiFi died permanently. RIP.';
+      return 'Narrator: Jiya\'s WiFi died permanently. RIP.';
     }
     if (callTime >= 39 && callTime < 42) {
       return 'Meera 💅: "well this was productive 💅" (hangs up)';
@@ -134,10 +134,10 @@ export default function VideoCallScreen({ isLight, onClose }) {
     }
 
     // Interrogation subtitles override
-    if (interrogationType === 'riya') {
-      return riyaDropped && callTime % 2 === 0
-        ? 'Riya 🧸: "HELLO?? CAN YOU HEAR ME?? GUYS?? HELLO???"'
-        : 'Narrator: Riya\'s connection dropped for 5 seconds... classic move.';
+    if (interrogationType === 'jiya') {
+      return jiyaDropped && callTime % 2 === 0
+        ? 'Jiya 🧸: "HELLO?? CAN YOU HEAR ME?? GUYS?? HELLO???"'
+        : 'Narrator: Jiya\'s connection dropped for 5 seconds... classic move.';
     }
     if (interrogationType === 'arjun_cat') {
       return 'Arjun 😎: "Wait, the cat is on my keyboard! Get off! kjasdhf!"';
@@ -154,10 +154,10 @@ export default function VideoCallScreen({ isLight, onClose }) {
 
     // Default timer subtitles
     if (callTime >= 3 && callTime < 7) {
-      return 'Riya 🧸: "no i\'m fine guys what\'s up 🙂" (clearly been crying)';
+      return 'Jiya 🧸: "no i\'m fine guys what\'s up 🙂" (clearly been crying)';
     }
     if (callTime >= 7 && callTime < 10) {
-      return 'Narrator: Riya\'s WiFi signal collapsed.';
+      return 'Narrator: Jiya\'s WiFi signal collapsed.';
     }
     if (callTime >= 10 && callTime < 14) {
       return 'Meera 💅: "okay so i\'ve been WAITING to talk about this!"';
@@ -359,25 +359,25 @@ export default function VideoCallScreen({ isLight, onClose }) {
             </div>
           </div>
 
-          {/* TILE 2: RIYA 🧸 */}
+          {/* TILE 2: JIYA 🧸 */}
           <div 
-            onClick={handleRiyaClick}
+            onClick={handleJiyaClick}
             style={{
-              background: (isRiyaFrozen || riyaDropped || isRiyaLeft) ? '#131210' : '#23201f',
+              background: (isJiyaFrozen || jiyaDropped || isJiyaLeft) ? '#131210' : '#23201f',
               borderRadius: '12px',
               position: 'relative',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              border: (isRiyaFrozen || riyaDropped || isRiyaLeft) ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(255,255,255,0.05)',
+              border: (isJiyaFrozen || jiyaDropped || isJiyaLeft) ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(255,255,255,0.05)',
               overflow: 'hidden',
               transition: 'all 0.3s ease',
               cursor: (interrogationType || callTime >= 30) ? 'not-allowed' : 'pointer'
             }}
           >
-            {isRiyaLeft ? (
-              /* Riya Permanently Gone */
+            {isJiyaLeft ? (
+              /* Jiya Permanently Gone */
               <div style={{
                 position: 'absolute',
                 inset: 0,
@@ -393,7 +393,7 @@ export default function VideoCallScreen({ isLight, onClose }) {
                 textAlign: 'center'
               }}>
                 <VideoOff size={32} style={{ marginBottom: '10px', opacity: 0.5 }} />
-                <span>Riya disconnected (WiFi RIP) 🧸❌</span>
+                <span>Jiya disconnected (WiFi RIP) 🧸❌</span>
               </div>
             ) : (
               <>
@@ -422,7 +422,7 @@ export default function VideoCallScreen({ isLight, onClose }) {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  filter: (isRiyaFrozen || riyaDropped) ? 'blur(2.5px) contrast(1.5) saturate(0.5)' : 'none',
+                  filter: (isJiyaFrozen || jiyaDropped) ? 'blur(2.5px) contrast(1.5) saturate(0.5)' : 'none',
                   transition: 'all 0.2s ease',
                   textAlign: 'center'
                 }}>
@@ -439,24 +439,24 @@ export default function VideoCallScreen({ isLight, onClose }) {
                     position: 'relative',
                     boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
                   }}>
-                    {(isRiyaFrozen || riyaDropped) ? '🤪' : '💁‍♀️'}
+                    {(isJiyaFrozen || jiyaDropped) ? '🤪' : '💁‍♀️'}
                     
                     {/* Tears cascading */}
-                    {!(isRiyaFrozen || riyaDropped) && (
+                    {!(isJiyaFrozen || jiyaDropped) && (
                       <>
                         <div style={{ position: 'absolute', left: '15px', top: '45px', fontSize: '10px', animation: 'tearFall 1.2s infinite linear' }}>💧</div>
                         <div style={{ position: 'absolute', right: '15px', top: '45px', fontSize: '10px', animation: 'tearFall 1.2s infinite linear', animationDelay: '0.6s' }}>💧</div>
                       </>
                     )}
                   </div>
-                  <span style={{ fontSize: '14px', fontWeight: 600, marginTop: '12px' }}>Riya 🧸</span>
+                  <span style={{ fontSize: '14px', fontWeight: 600, marginTop: '12px' }}>Jiya 🧸</span>
                   <span style={{ fontSize: '11px', color: '#f43f5e', opacity: 0.8, marginTop: '2px', fontWeight: 500 }}>
-                    {(isRiyaFrozen || riyaDropped) ? 'CONNECTION FROZEN' : '"no i\'m fine guys what\'s up 🙂"'}
+                    {(isJiyaFrozen || jiyaDropped) ? 'CONNECTION FROZEN' : '"no i\'m fine guys what\'s up 🙂"'}
                   </span>
                 </div>
 
-                {/* Riya's WiFi COLLAPSED / DROPPED Overlay */}
-                {(isRiyaFrozen || riyaDropped) && (
+                {/* Jiya's WiFi COLLAPSED / DROPPED Overlay */}
+                {(isJiyaFrozen || jiyaDropped) && (
                   <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -481,10 +481,10 @@ export default function VideoCallScreen({ isLight, onClose }) {
                       textAlign: 'center',
                       boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
                     }}>
-                      {riyaDropped ? '⚠️ INTERROGATION GLITCH' : "riya's WiFi said ✌️"}
+                      {jiyaDropped ? '⚠️ INTERROGATION GLITCH' : "jiya's WiFi said ✌️"}
                     </div>
                     <span style={{ fontSize: '10px', color: '#ef4444', marginTop: '6px', fontWeight: 600, animation: 'sparkles 1.5s infinite' }}>
-                      {riyaDropped ? 'HELLO?? GUYS?? HELLO??' : 'RECONNECTING...'}
+                      {jiyaDropped ? 'HELLO?? GUYS?? HELLO??' : 'RECONNECTING...'}
                     </span>
                     <div style={{
                       width: '20px',
@@ -507,14 +507,14 @@ export default function VideoCallScreen({ isLight, onClose }) {
                   padding: '4px 6px',
                   borderRadius: '6px',
                   fontSize: '10px',
-                  color: (isRiyaFrozen || riyaDropped) ? '#ef4444' : '#00a884',
+                  color: (isJiyaFrozen || jiyaDropped) ? '#ef4444' : '#00a884',
                   fontWeight: 'bold'
                 }}>
-                  WiFi: {(isRiyaFrozen || riyaDropped) ? 'OFFLINE' : 'STABLE-ISH'}
+                  WiFi: {(isJiyaFrozen || jiyaDropped) ? 'OFFLINE' : 'STABLE-ISH'}
                 </div>
 
                 {/* Hover interrogation tag */}
-                {!isRiyaFrozen && !riyaDropped && !interrogationType && callTime < 30 && (
+                {!isJiyaFrozen && !jiyaDropped && !interrogationType && callTime < 30 && (
                   <div style={{
                     position: 'absolute',
                     bottom: '8px',
