@@ -496,7 +496,7 @@ export default function TheChat({ theme, onNext }) {
               isTyping={isTyping}
               chatScript={chatScript}
               currentTime={currentTime}
-              onNext={onNext}
+              onNext={(suspect) => onNext && onNext(suspect)}
             />
           </motion.div>
         )}

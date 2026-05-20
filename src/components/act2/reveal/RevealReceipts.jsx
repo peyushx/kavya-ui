@@ -1,134 +1,115 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-function DmBubble({ sender, text, isOutgoing, color }) {
-  return (
-    <div style={{ alignSelf: isOutgoing ? 'flex-end' : 'flex-start', maxWidth: '80%', background: isOutgoing ? '#005c4b' : '#202c33', borderRadius: isOutgoing ? '8px 0 8px 8px' : '0 8px 8px 8px', padding: '6px 8px 2px', marginTop: 3 }}>
-      {!isOutgoing && <div style={{ fontSize: 11, fontWeight: 'bold', color: color || '#00a884', paddingBottom: 2 }}>{sender}</div>}
-      <div style={{ fontSize: 13, color: '#e9edef' }}>{text}</div>
-    </div>
-  );
-}
-
-function ForwardedBlock({ text }) {
-  return (
-    <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#005c4b', borderRadius: '8px 0 8px 8px', padding: '6px 8px', marginTop: 3 }}>
-      <div style={{ fontSize: 10, color: '#00a884', fontStyle: 'italic', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}>↗ Forwarded from besties only 💀🫶</div>
-      <div style={{ background: 'rgba(0,0,0,0.2)', borderLeft: '3px solid #eb5528', padding: '6px 8px', borderRadius: 4, fontSize: 12, color: '#e9edef', fontStyle: 'italic' }}>
-        <span style={{ fontSize: 11, fontWeight: 'bold', color: '#eb5528' }}>Jiya 🧸</span><br />{text}
-      </div>
-    </div>
-  );
-}
-
-const SCREENSHOTS = [
-  {
-    title: 'DM with Sahil',
-    messages: [
-      { sender: 'You 🫵', text: "bro you won't believe what jiya just said in the group chat 💀", out: true },
-      { sender: 'Sahil', text: 'what', out: false, color: '#60a5fa' },
-      { type: 'forwarded', text: "i feel like i'm too clingy sometimes and everyone secretly finds me annoying... i just don't want to lose anyone 🥺" },
-      { sender: 'Sahil', text: 'lmaooo she actually said that in a GROUP CHAT??', out: false, color: '#60a5fa' },
-      { sender: 'You 🫵', text: 'ikr 💀💀', out: true },
-    ]
-  },
-  {
-    title: 'DM with Sahil (continued)',
-    messages: [
-      { sender: 'Sahil', text: "bro that's kinda personal tho", out: false, color: '#60a5fa' },
-      { sender: 'You 🫵', text: "yeah but it's funny", out: true },
-      { sender: 'Sahil', text: 'should i tell her i saw it', out: false, color: '#60a5fa' },
-      { sender: 'You 🫵', text: "NO. don't. she'll know someone leaked it", out: true },
-      { sender: 'Sahil', text: 'too late i already told my girlfriend', out: false, color: '#60a5fa' },
-      { sender: 'You 🫵', text: 'BRO', out: true },
-      { sender: 'Sahil', text: "she probably won't tell anyone", out: false, color: '#60a5fa' },
-      { sender: 'You 🫵', text: '🤦‍♂️', out: true },
-    ]
-  },
-  {
-    title: 'besties only 💀🫶 — after the leak',
-    messages: [
-      { sender: 'Jiya 🧸', text: 'guys. someone told sahil what i said in this group. who did this?? i\'m literally shaking rn 😭', out: false, color: '#eb5528' },
-      { sender: 'Meera 💅', text: 'WHAT. that\'s so messed up', out: false, color: '#ec4899' },
-      { sender: 'Arjun 😎', text: "bro that's not cool", out: false, color: '#64748b' },
-      { sender: 'You 🫵', text: 'wtf?? who would do that 😤', out: true },
-      { sender: 'You 🫵', text: "that's so wrong. i'm so sorry jiya 💔", out: true },
-      { sender: 'Jiya 🧸', text: 'i trusted this group with something personal and someone just shared it like it was a joke', out: false, color: '#eb5528' },
-      { sender: 'You 🫵', text: "we'll figure out who did it. i promise. 💪", out: true },
-    ]
-  },
+const DM_MESSAGES = [
+  { sender: 'Meera 💅', color: '#ec4899', text: 'jiya' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'i need to tell you something' },
+  { sender: 'Meera 💅', color: '#ec4899', text: "and please don't hate me" },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'what happened??' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'you know your message in the group. the one about feeling clingy.' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'sahil knows about it.' },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'WHAT' },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'HOW' },
+  { sender: 'Meera 💅', color: '#ec4899', text: "i was on a call with sneha and i was venting about how i felt bad that you were feeling that way" },
+  { sender: 'Meera 💅', color: '#ec4899', text: "and i didn't realize sahil was with her" },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'he overheard it' },
+  { sender: 'Meera 💅', color: '#ec4899', text: "i didn't screenshot it. i didn't forward it. but i talked about it out loud and the wrong person was in the room." },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'meera...' },
+  { sender: 'Meera 💅', color: '#ec4899', text: "i know. i know. i'm so sorry." },
+  { sender: 'Meera 💅', color: '#ec4899', text: "i wasn't gossiping about you i swear. i was genuinely worried. i was telling sneha that i didn't know how to make you feel better." },
+  { sender: 'Meera 💅', color: '#ec4899', text: "but it doesn't matter because the result is the same. you got hurt because of me." },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: '...' },
+  { sender: 'Meera 💅', color: '#ec4899', text: "i understand if you're mad. you have every right to be." },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'meera.' },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: "i'm not mad." },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: "i'm hurt. yeah." },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: "but you told me yourself. you didn't hide it. you didn't let me find out from someone else." },
+  { sender: 'Meera 💅', color: '#ec4899', text: "i couldn't do that to you. you're my person 🥺" },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: "you're my person too idiot 😭💖" },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: "just... next time. even if you're worried about me. keep it in the group. or tell me directly." },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'promise?' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'promise. real promise. not pinky promise. REAL. 💖' },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'i love you' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'i love you more 🥺💅' },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: "also tell sneha to control her boyfriend's ears" },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'LMAOOO 😭😭' },
 ];
 
-const SPLIT_SCREEN = {
-  left: { title: 'besties only 💀🫶', msg: { sender: 'You 🫵', text: "we'll figure out who did it. i promise. 💪", out: true } },
-  right: { title: 'DM with Sahil', messages: [
-    { sender: 'You 🫵', text: 'bro delete the messages. they\'re trying to figure out who leaked it 💀', out: true },
-    { sender: 'Sahil', text: "lmao you're on your own", out: false, color: '#60a5fa' },
-    { sender: 'You 🫵', text: 'SAHIL.', out: true },
-  ]}
-};
-
 export default function RevealReceipts({ onComplete }) {
-  const [currentSS, setCurrentSS] = useState(-1); // -1 = title, 0-2 = screenshots, 3 = split
+  const [showTitle, setShowTitle] = useState(true);
+  const [showDm, setShowDm] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [typing, setTyping] = useState(false);
 
   useEffect(() => {
-    const delays = [3000, 6000, 6000, 6000, 5000];
-    if (currentSS < 3) {
-      const t = setTimeout(() => setCurrentSS(prev => prev + 1), delays[currentSS + 1] || 5000);
-      return () => clearTimeout(t);
-    } else {
-      const t = setTimeout(onComplete, 5000);
+    const t = setTimeout(() => { setShowTitle(false); setShowDm(true); }, 4000);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!showDm) return;
+    if (visibleCount >= DM_MESSAGES.length) {
+      const t = setTimeout(onComplete, 3000);
       return () => clearTimeout(t);
     }
-  }, [currentSS]);
+    setTyping(true);
+    const t = setTimeout(() => {
+      setTyping(false);
+      setVisibleCount(prev => prev + 1);
+    }, 900 + Math.random() * 400);
+    return () => clearTimeout(t);
+  }, [showDm, visibleCount]);
 
-  const cardStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '16px 14px', maxWidth: 420, width: '90vw', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' };
-  const headerStyle = { fontSize: 11, color: '#8696a0', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600 };
+  const nextSender = visibleCount < DM_MESSAGES.length ? DM_MESSAGES[visibleCount].sender : null;
+
+  if (showTitle) {
+    return (
+      <div style={{ height: '100vh', background: '#000', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontFamily: "'Outfit', sans-serif" }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}
+          style={{ fontSize: 13, color: '#8696a0', letterSpacing: 1.5, marginBottom: 8, textAlign: 'center' }}>
+          📁 recovered DM logs · between Meera 💅 and Jiya 🧸
+        </motion.div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 0.8 }}
+          style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', fontStyle: 'italic', textAlign: 'center' }}>
+          timestamp: 1:30 AM · 3 hours BEFORE the investigation started
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ height: '100vh', background: '#000', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20, fontFamily: "'Outfit', sans-serif" }}>
-      {/* Title */}
-      {currentSS === -1 && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}
-          style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 12, color: '#8696a0', letterSpacing: 2, marginBottom: 8 }}>📁 recovered DM logs · suspect:</div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 0.8 }}
-            style={{ fontSize: 28, fontWeight: 700, color: '#ef4444' }}>You 🫵</motion.div>
-        </motion.div>
-      )}
-
-      {/* Screenshot cards */}
-      {currentSS >= 0 && currentSS <= 2 && (
-        <motion.div key={currentSS} initial={{ opacity: 0, scale: 0.95, x: -5 }} animate={{ opacity: 1, scale: 1, x: [0, -3, 3, -2, 0] }}
-          transition={{ duration: 0.5, x: { duration: 0.4, delay: 0.1 } }} style={cardStyle}>
-          <div style={headerStyle}>💬 {SCREENSHOTS[currentSS].title}</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {SCREENSHOTS[currentSS].messages.map((m, i) => (
-              m.type === 'forwarded' ? <ForwardedBlock key={i} text={m.text} />
-                : <DmBubble key={i} sender={m.sender} text={m.text} isOutgoing={m.out} color={m.color} />
-            ))}
-          </div>
-        </motion.div>
-      )}
-
-      {/* Split screen */}
-      {currentSS === 3 && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          style={{ display: 'flex', gap: 12, maxWidth: 700, width: '95vw' }}>
-          <div style={{ ...cardStyle, flex: 1, borderColor: 'rgba(0,168,132,0.3)' }}>
-            <div style={headerStyle}>👥 {SPLIT_SCREEN.left.title}</div>
-            <DmBubble sender={SPLIT_SCREEN.left.msg.sender} text={SPLIT_SCREEN.left.msg.text} isOutgoing={SPLIT_SCREEN.left.msg.out} />
-          </div>
-          <div style={{ ...cardStyle, flex: 1, borderColor: 'rgba(239,68,68,0.3)' }}>
-            <div style={headerStyle}>💬 {SPLIT_SCREEN.right.title}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {SPLIT_SCREEN.right.messages.map((m, i) => (
-                <DmBubble key={i} sender={m.sender} text={m.text} isOutgoing={m.out} color={m.color} />
-              ))}
-            </div>
-          </div>
-        </motion.div>
-      )}
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: '#0b141a', color: '#e9edef', fontFamily: "'Outfit', sans-serif" }}>
+      <div style={{ padding: '12px 16px', background: '#202c33', display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px solid #222e35' }}>
+        <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'rgba(236,72,153,0.15)', border: '1px solid rgba(236,72,153,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>💬</div>
+        <div>
+          <h4 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>Meera 💅 ↔ Jiya 🧸</h4>
+          <span style={{ fontSize: 11, color: '#8696a0' }}>private DM · 1:30 AM</span>
+        </div>
+        <div style={{ marginLeft: 'auto', fontSize: 11, color: '#ef4444', fontWeight: 600, padding: '4px 10px', background: 'rgba(239,68,68,0.1)', borderRadius: 12, border: '1px solid rgba(239,68,68,0.2)' }}>
+          🔒 RECOVERED
+        </div>
+      </div>
+      <div data-lenis-prevent onWheel={e => e.stopPropagation()} style={{ flex: 1, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 4 }}>
+        {DM_MESSAGES.slice(0, visibleCount).map((msg, i) => {
+          const isMeera = msg.sender.includes('Meera');
+          return (
+            <motion.div key={i} initial={{ opacity: 0, x: isMeera ? -15 : 15 }} animate={{ opacity: 1, x: 0 }}
+              style={{ alignSelf: isMeera ? 'flex-start' : 'flex-end', maxWidth: '80%', background: isMeera ? '#202c33' : '#005c4b', borderRadius: isMeera ? '0 8px 8px 8px' : '8px 0 8px 8px', padding: '6px 8px 2px', marginTop: 3 }}>
+              <div style={{ fontSize: 11, fontWeight: 'bold', color: msg.color, paddingBottom: 2 }}>{msg.sender}</div>
+              <div style={{ fontSize: 13 }}>{msg.text}</div>
+              <div style={{ textAlign: 'right', fontSize: 10, color: '#8696a0', paddingTop: 2 }}>1:30 AM</div>
+            </motion.div>
+          );
+        })}
+        {typing && nextSender && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            style={{ alignSelf: nextSender.includes('Meera') ? 'flex-start' : 'flex-end', background: nextSender.includes('Meera') ? '#202c33' : '#005c4b', borderRadius: '0 8px 8px 8px', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
+            <span style={{ fontSize: 11, fontWeight: 'bold', color: DM_MESSAGES[visibleCount]?.color, marginRight: 6 }}>{nextSender}</span>
+            {[0, 1, 2].map(j => <span key={j} style={{ display: 'inline-block', width: 6, height: 6, background: '#8696a0', borderRadius: '50%', animation: `bounceTyping 0.8s infinite alternate ${j * 0.2}s` }} />)}
+          </motion.div>
+        )}
+      </div>
+      <style>{`@keyframes bounceTyping { 0% { transform:translateY(0); opacity:0.4; } 100% { transform:translateY(-4px); opacity:1; } }`}</style>
     </div>
   );
 }

@@ -449,7 +449,7 @@ function PhoneInterface({
               boxSizing: 'border-box'
             }}
           >
-            <WhatsAppUI theme={theme} onNext={onNext} />
+            <WhatsAppUI theme={theme} onNext={(suspect) => onNext && onNext(suspect)} />
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Fingerprint, Gauge, Handshake, Loader, CloudMoon, FlaskConical, Mail, CloudRain, Check, ChevronRight, X, MessageSquare, Eye } from 'lucide-react';
+import { Fingerprint, Gauge, Handshake, Loader, CloudMoon, FlaskConical, Mail, CloudRain, Check, ChevronRight, X, MessageSquare, Eye, ShieldAlert } from 'lucide-react';
 
 const CHAPTERS = [
   // Act 1
@@ -14,7 +14,6 @@ const CHAPTERS = [
   { id: 'act2-resume', act: 'act2', step: null, label: 'A letter to baddie', Icon: Mail, act2Phase: 'resume' },
   { id: 'act2-rain', act: 'act2', step: null, label: 'The Rain', Icon: CloudRain, act2Phase: 'rain' },
   { id: 'act2-chat', act: 'act2', step: null, label: 'The Chat', Icon: MessageSquare, act2Phase: 'chat' },
-  { id: 'act2-detective', act: 'act2', step: null, label: 'The Verdict', Icon: Eye, act2Phase: 'detective' },
 ];
 
 export default function ChapterNav({ currentAct, act1Step, act2Phase, onNavigate }) {

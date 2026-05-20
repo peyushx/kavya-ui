@@ -2,24 +2,25 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const LINES = [
-  'you spent all that time',
-  'checking their profiles',
-  'reading their messages',
-  'going through their chat history',
+  'so.',
+  'that happened at 1:30 AM.',
+  'three hours before you started your little investigation.',
+  'meera already confessed.',
+  'jiya already forgave her.',
+  'they already handled it.',
+  'like adults.',
+  'like real friends.',
+  null,
+  'and you?',
+  'you spent the last 20 minutes',
+  'going through their profiles',
+  'snooping through their chat history',
   'analyzing their last seen',
-  'judging their bios',
-  'investigating their groups',
+  'reading their group chats',
   'interrogating them one by one',
-  null, // pause
-  'and the whole time',
+  'playing detective 🔍',
   null,
-  'the screenshots were in YOUR DMs',
-  null,
-  'the forwarded message was from YOUR chat',
-  null,
-  'the "who would do that 😤" was YOU',
-  null,
-  'you were the detective AND the criminal bestie 🐍🪞',
+  'on a case that was already closed 💀',
 ];
 
 export default function RevealTypewriter({ onComplete }) {
@@ -27,7 +28,7 @@ export default function RevealTypewriter({ onComplete }) {
 
   useEffect(() => {
     if (visibleCount >= LINES.length) {
-      const t = setTimeout(onComplete, 3000);
+      const t = setTimeout(onComplete, 3500);
       return () => clearTimeout(t);
     }
     const current = LINES[visibleCount];
@@ -41,10 +42,11 @@ export default function RevealTypewriter({ onComplete }) {
       <div style={{ maxWidth: 500, display: 'flex', flexDirection: 'column', gap: 6 }}>
         {LINES.slice(0, visibleCount).map((line, i) => {
           if (line === null) return <div key={i} style={{ height: 12 }} />;
-          const isHighlight = line.includes('YOUR') || line.includes('YOU') || line.includes('detective AND');
+          const isHighlight = line.includes('already') || line.includes('already closed') || line.includes('detective');
+          const isFinal = line.includes('already closed');
           return (
             <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
-              style={{ fontSize: isHighlight ? 18 : 15, color: isHighlight ? '#ef4444' : 'rgba(255,255,255,0.7)', fontWeight: isHighlight ? 700 : 400, fontStyle: 'italic' }}>
+              style={{ fontSize: isFinal ? 20 : isHighlight ? 16 : 15, color: isFinal ? '#ef4444' : isHighlight ? '#fbbf24' : 'rgba(255,255,255,0.7)', fontWeight: isFinal ? 700 : isHighlight ? 600 : 400, fontStyle: 'italic' }}>
               {line}
             </motion.div>
           );

@@ -71,7 +71,7 @@ export default function GroupInfoView({ colors, isLight, setView, onNext, isFavo
     },
     { 
       name: 'You 🫵', 
-      status: 'screenshots taken in this chat: 4', 
+      status: 'messages are end-to-end encrypted. doesnt stop overthinking though 🫠', 
       avatar: '🫵', 
       color: '#10b981', 
       tag: 'Added by Meera' 
@@ -303,7 +303,7 @@ export default function GroupInfoView({ colors, isLight, setView, onNext, isFavo
               </div>
               <span style={{ 
                 fontSize: '11.5px', 
-                color: m.name === 'You 🫵' ? '#ef4444' : colors.dateText, 
+                color: colors.dateText, 
                 marginTop: '3px',
                 fontWeight: m.name === 'You 🫵' ? 600 : 400
               }}>

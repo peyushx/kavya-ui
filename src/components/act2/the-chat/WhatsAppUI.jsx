@@ -9,6 +9,7 @@ import ContactInfoView from './ContactInfoView';
 import GroupPreviewThread from './GroupPreviewThread';
 import { GroupPreviewInfoView } from './GroupPreviewInfoView';
 import PrivateDmView from './PrivateDmView';
+import RevealChatThread from './RevealChatThread';
 export default function WhatsAppUI({ theme, onNext }) {
   const isLight = theme === 'light';
   
@@ -104,6 +105,7 @@ export default function WhatsAppUI({ theme, onNext }) {
   });
 
   const [activeDmSuspect, setActiveDmSuspect] = useState(null);
+  const [revealSuspect, setRevealSuspect] = useState(null);
 
   const [narratorDmAlertTriggered, setNarratorDmAlertTriggered] = useState(() => {
     return localStorage.getItem('kavvs_narrator_dm_alert_triggered') === 'true';
@@ -475,12 +477,22 @@ export default function WhatsAppUI({ theme, onNext }) {
     );
   }
 
-  const [verdictSelected, setVerdictSelected] = useState(false);
+  if (revealSuspect) {
+    mockChats.push({
+      id: 'reveal-chat',
+      name: 'the reveal 🔍',
+      message: 'the truth is out...',
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      avatar: '🔍',
+      color: '#ef4444',
+      isGroup: true,
+      selected: activeChatId === 'reveal',
+      isMain: true,
+      chatId: 'reveal'
+    });
+  }
 
   const handleVerdictSelection = (suspectName) => {
-    setVerdictSelected(true);
-    
-    // Append user's choice to Pishu's chat
     const userMsg = {
       id: `pishu-verdict-user-${Date.now()}`,
       sender: 'You 🫵',
@@ -497,9 +509,7 @@ export default function WhatsAppUI({ theme, onNext }) {
       const conclusionMsg = {
         id: `pishu-verdict-reply-${Date.now()}`,
         sender: 'Pishu',
-        text: suspectName === 'Jiya 🧸' ? 'you chose the victim? interesting. let\'s see.' 
-            : suspectName === 'Arjun 😎' ? 'the quiet one. interesting choice. let\'s see.' 
-            : 'the loud one. interesting choice. let\'s see.',
+        text: 'let\'s see what really happened.',
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         senderColor: '#ef4444',
         isIncoming: true
@@ -507,8 +517,10 @@ export default function WhatsAppUI({ theme, onNext }) {
       setPishuMessages(prev => [...prev, conclusionMsg]);
       
       setTimeout(() => {
-        if (onNext) onNext();
-      }, 4500);
+        setRevealSuspect(suspectName);
+        setActiveChatId('reveal');
+        setActiveDmSuspect(null);
+      }, 2000);
     }, 1800);
   };
 
@@ -599,6 +611,13 @@ export default function WhatsAppUI({ theme, onNext }) {
           }}
           setNarratorComment={setNarratorComment}
         />
+      ) : activeChatId === 'reveal' && revealSuspect ? (
+        <RevealChatThread
+          chosenSuspect={revealSuspect}
+          isLight={isLight}
+          colors={colors}
+          onComplete={() => { if (onNext) onNext(); }}
+        />
       ) : activeDmSuspect ? (
         <PrivateDmView
           key={activeDmSuspect}
@@ -635,7 +654,7 @@ export default function WhatsAppUI({ theme, onNext }) {
           completedDms={completedDms}
           onStartSuspectDm={(suspectName) => setActiveDmSuspect(suspectName)}
           activeChatId={activeChatId}
-          verdictOptions={activeChatId === 'pishu' && completedDms.length === 3 && !verdictSelected ? ['Jiya 🧸', 'Arjun 😎', 'Meera 💅'] : null}
+          verdictOptions={activeChatId === 'pishu' && completedDms.length === 3 && !revealSuspect ? ['Jiya 🧸', 'Arjun 😎', 'Meera 💅'] : null}
           onVerdictSelect={handleVerdictSelection}
         />
       )}
