@@ -220,62 +220,78 @@ export default function WhatsAppUI({ theme, onNext }) {
     if (inputLockedState === 'initial') {
       const nextAttempt = typingAttempt + 1;
       setTypingAttempt(nextAttempt);
+      localStorage.setItem('kavvs_typing_attempt', String(nextAttempt));
 
-      if (nextAttempt === 1) {
-        const tempId = `temp-${Date.now()}`;
-        const newMsg = {
-          id: tempId,
-          sender: 'You',
-          type: 'text',
-          text: inputText,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isIncoming: false
-        };
-        setMessages(prev => [...prev, newMsg]);
-        setInputText('');
+      const tempId = `temp-${Date.now()}`;
+      const newMsg = {
+        id: tempId,
+        sender: 'You',
+        type: 'text',
+        text: inputText,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        isIncoming: false
+      };
+      setMessages(prev => {
+        const next = [...prev, newMsg];
+        localStorage.setItem('kavvs_whatsapp_history', JSON.stringify(next));
+        return next;
+      });
+      setInputText('');
 
-        setTimeout(() => {
-          // Mark the message as deleted by admin
-          setMessages(prev => prev.map(m => m.id === tempId ? { ...m, deleted: true } : m));
-          
-          // Trigger Pishu's typing animation
-          setNarratorTyping(true);
-
-          setTimeout(() => {
-            setNarratorTyping(false);
-            const pishuMsg = {
-              id: `pishu-${Date.now()}`,
-              sender: 'Pishu ✨',
-              type: 'text',
-              text: "this is a crime scene bestie. you don't get to talk. you OBSERVE 🔍",
-              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              senderColor: '#34b7f1',
-              isIncoming: true
-            };
-            setMessages(prev => [...prev, pishuMsg]);
-          }, 2000);
-        }, 1200);
-      } 
-      else if (nextAttempt === 2) {
+      if (nextAttempt === 2) {
         setIsShakingInput(true);
-        setInputText('');
         setTimeout(() => {
           setIsShakingInput(false);
         }, 500);
-        showTypingToast("did i stutter? no texting during an investigation 🚫");
-      } 
-      else if (nextAttempt >= 3) {
-        setInputText('');
-        if (document.activeElement) {
-          document.activeElement.blur();
+      }
+
+      setTimeout(() => {
+        // Mark the group message as deleted
+        setMessages(prev => {
+          const next = prev.map(m => m.id === tempId ? { ...m, deleted: true } : m);
+          localStorage.setItem('kavvs_whatsapp_history', JSON.stringify(next));
+          return next;
+        });
+
+        // Set Pishu unread count to true (so they see a notification badge)
+        if (activeChatId !== 'pishu') {
+          localStorage.setItem('kavvs_pishu_unread', 'true');
         }
+
+        // Trigger Pishu's typing animation
         setNarratorTyping(true);
+
         setTimeout(() => {
           setNarratorTyping(false);
-          showTypingToast("you're really persistent huh. fine. i'll allow one message.");
-          setInputLockedState('unlocked_for_one');
+
+          let replyText = "";
+          if (nextAttempt === 1) {
+            replyText = "this is a crime scene bestie. you don't get to talk. you OBSERVE 🔍";
+          } else if (nextAttempt === 2) {
+            replyText = "did i stutter? no texting during an investigation 🚫";
+          } else {
+            replyText = "you're really persistent huh. fine. i'll allow one message.";
+            setInputLockedState('unlocked_for_one');
+            localStorage.setItem('kavvs_input_lock_state', 'unlocked_for_one');
+          }
+
+          const pishuMsg = {
+            id: `pishu-${Date.now()}`,
+            sender: 'Pishu ✨',
+            type: 'text',
+            text: replyText,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            senderColor: '#34b7f1',
+            isIncoming: true
+          };
+
+          setPishuMessages(prev => {
+            const next = [...prev, pishuMsg];
+            localStorage.setItem('kavvs_pishu_messages', JSON.stringify(next));
+            return next;
+          });
         }, 2000);
-      }
+      }, 1200);
     } 
     else if (inputLockedState === 'unlocked_for_one') {
       const myText = inputText;
