@@ -219,7 +219,7 @@ export default function LeftSidebar({
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0
-                  }}>1</span>
+                  }}>{chat.unreadCount || 1}</span>
                 )}
               </div>
             </div>

@@ -391,7 +391,7 @@ export default function ChatThread({
           );
         })}
 
-        {narratorTyping && (
+        {narratorTyping && activeChatId === 'pishu' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -407,8 +407,8 @@ export default function ChatThread({
               marginTop: '4px'
             }}
           >
-            <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#00a884', marginRight: '6px' }}>
-              Narrator 🕵️‍♂️
+            <span style={{ fontSize: '11.5px', fontWeight: 'bold', color: '#00a884', marginRight: '6px' }}>
+              Pishu ✨
             </span>
             <span style={{ display: 'inline-block', width: '6px', height: '6px', background: '#8696a0', borderRadius: '50%', animation: 'bounceTyping 0.8s infinite alternate' }} />
             <span style={{ display: 'inline-block', width: '6px', height: '6px', background: '#8696a0', borderRadius: '50%', animation: 'bounceTyping 0.8s infinite alternate 0.2s' }} />

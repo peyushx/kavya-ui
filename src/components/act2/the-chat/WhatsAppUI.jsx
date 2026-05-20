@@ -79,9 +79,17 @@ export default function WhatsAppUI({ theme, onNext }) {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [pishuUnreadCount, setPishuUnreadCount] = useState(() => {
+    return Number(localStorage.getItem('kavvs_pishu_unread_count') || '0');
+  });
+
   useEffect(() => {
     localStorage.setItem('kavvs_pishu_messages', JSON.stringify(pishuMessages));
   }, [pishuMessages]);
+
+  useEffect(() => {
+    localStorage.setItem('kavvs_pishu_unread_count', String(pishuUnreadCount));
+  }, [pishuUnreadCount]);
 
   const [typingAttempt, setTypingAttempt] = useState(() => {
     return Number(localStorage.getItem('kavvs_typing_attempt') || '0');
@@ -256,9 +264,18 @@ export default function WhatsAppUI({ theme, onNext }) {
         // Set Pishu unread count to true (so they see a notification badge)
         if (activeChatId !== 'pishu') {
           localStorage.setItem('kavvs_pishu_unread', 'true');
+          setPishuUnreadCount(c => {
+            const next = c + 1;
+            localStorage.setItem('kavvs_pishu_unread_count', String(next));
+            return next;
+          });
         }
 
+        // Trigger Pishu's typing animation
+        setNarratorTyping(true);
+
         setTimeout(() => {
+          setNarratorTyping(false);
 
           let replyText = "";
           if (nextAttempt === 1) {
@@ -302,6 +319,7 @@ export default function WhatsAppUI({ theme, onNext }) {
       setMessages(prev => [...prev, myMsg]);
       setInputText('');
       setInputLockedState('revoked');
+      localStorage.setItem('kavvs_input_lock_state', 'revoked');
 
       setTimeout(() => {
         const jiyaMsg = {
@@ -343,8 +361,36 @@ export default function WhatsAppUI({ theme, onNext }) {
       }, 4500);
 
       setTimeout(() => {
-        showTypingToast("yeah they didn't understand you. honestly neither did i. stick to the investigation 💀");
-      }, 6000);
+        if (activeChatId !== 'pishu') {
+          localStorage.setItem('kavvs_pishu_unread', 'true');
+          setPishuUnreadCount(c => {
+            const next = c + 1;
+            localStorage.setItem('kavvs_pishu_unread_count', String(next));
+            return next;
+          });
+        }
+
+        // Trigger Pishu's typing animation
+        setNarratorTyping(true);
+
+        setTimeout(() => {
+          setNarratorTyping(false);
+          const pishuMsg = {
+            id: `pishu-gossip-${Date.now()}`,
+            sender: 'Pishu ✨',
+            type: 'text',
+            text: "yeah they didn't understand you. honestly neither did i. stick to the investigation 💀",
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            senderColor: '#34b7f1',
+            isIncoming: true
+          };
+          setPishuMessages(prev => {
+            const next = [...prev, pishuMsg];
+            localStorage.setItem('kavvs_pishu_messages', JSON.stringify(next));
+            return next;
+          });
+        }, 2000);
+      }, 5000);
     }
   };
 
@@ -461,7 +507,8 @@ export default function WhatsAppUI({ theme, onNext }) {
       selected: activeSidebarGroup === null && activeChatId === 'pishu' && !activeDmSuspect,
       isMain: true,
       chatId: 'pishu',
-      unread: localStorage.getItem('kavvs_pishu_unread') === 'true'
+      unreadCount: pishuUnreadCount,
+      unread: pishuUnreadCount > 0
     }
   ];
 
@@ -629,6 +676,8 @@ export default function WhatsAppUI({ theme, onNext }) {
             setActiveDmSuspect(null);
             if (chat.chatId === 'pishu') {
               localStorage.setItem('kavvs_pishu_unread', 'false');
+              localStorage.setItem('kavvs_pishu_unread_count', '0');
+              setPishuUnreadCount(0);
               localStorage.setItem('kavvs_stalking_unlocked', 'true');
               setIsStalkingUnlocked(true);
             }
