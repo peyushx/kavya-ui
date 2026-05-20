@@ -1,126 +1,106 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { Lock } from 'lucide-react';
 
-const REACTIONS = {
-  'Jiya 🧸': [
-    { sender: 'Jiya 🧸', color: '#eb5528', text: 'you think the person who got leaked... did the leaking?? 🥺' },
-    { sender: 'Jiya 🧸', color: '#eb5528', text: "that's like blaming the pizza for getting eaten" },
-    { sender: 'Arjun 😎', color: '#64748b', text: 'lol' },
-    { sender: 'Meera 💅', color: '#ec4899', text: 'bestie... no. just no. 😭' },
-  ],
-  'Arjun 😎': [
-    { sender: 'Arjun 😎', color: '#64748b', text: 'bro' },
-    { sender: 'Arjun 😎', color: '#64748b', text: "i haven't even opened the group chat in 3 days" },
-    { sender: 'Arjun 😎', color: '#64748b', text: "i'm here right now because meera called me 4 times" },
-    { sender: 'Arjun 😎', color: '#64748b', text: 'i thought someone died' },
-    { sender: 'Jiya 🧸', color: '#eb5528', text: '😭😭' },
-    { sender: 'Meera 💅', color: '#ec4899', text: 'i called you because this is SERIOUS arjun' },
-  ],
-  'Meera 💅': [
-    { sender: 'Meera 💅', color: '#ec4899', text: '...' },
-    { sender: 'Meera 💅', color: '#ec4899', text: 'ok.' },
-    { sender: 'Meera 💅', color: '#ec4899', text: 'fine.' },
-    { sender: 'Jiya 🧸', color: '#eb5528', text: 'meera?' },
-    { sender: 'Meera 💅', color: '#ec4899', text: "no no. they're right." },
-  ],
-};
-
-const NARRATOR_LINES = [
-  { type: 'system', text: '🔔 ok. investigation is over.' },
-  { type: 'system', text: '🔔 time for the truth.' },
-  { type: 'system', text: "🔔 and bestie... you're not ready for this one 💀" },
-];
-
-const DM_HEADER = { type: 'dm-header', text: '📁 recovered DM logs · between Meera 💅 and Jiya 🧸\ntimestamp: 1:30 AM · 3 hours BEFORE the investigation started' };
-
-const DM_MESSAGES = [
-  { sender: 'Meera 💅', color: '#ec4899', text: 'jiya' },
-  { sender: 'Meera 💅', color: '#ec4899', text: 'i need to tell you something' },
-  { sender: 'Meera 💅', color: '#ec4899', text: "and please don't hate me" },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'what happened??' },
-  { sender: 'Meera 💅', color: '#ec4899', text: 'you know your message in the group. the one about feeling clingy.' },
-  { sender: 'Meera 💅', color: '#ec4899', text: 'sahil knows about it.' },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'WHAT' },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'HOW' },
-  { sender: 'Meera 💅', color: '#ec4899', text: "i was on a call with sneha and i was venting about how i felt bad that you were feeling that way" },
-  { sender: 'Meera 💅', color: '#ec4899', text: "and i didn't realize sahil was with her" },
-  { sender: 'Meera 💅', color: '#ec4899', text: 'he overheard it' },
-  { sender: 'Meera 💅', color: '#ec4899', text: "i didn't screenshot it. i didn't forward it. but i talked about it out loud and the wrong person was in the room." },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'meera...' },
-  { sender: 'Meera 💅', color: '#ec4899', text: "i know. i know. i'm so sorry." },
-  { sender: 'Meera 💅', color: '#ec4899', text: "i wasn't gossiping about you i swear. i was genuinely worried." },
-  { sender: 'Meera 💅', color: '#ec4899', text: "but it doesn't matter because the result is the same. you got hurt because of me." },
+// ═══════════════════════════════════════════════════════
+// CORRECT ANSWER — MEERA 💅
+// ═══════════════════════════════════════════════════════
+const MEERA_CORRECT = [
+  { type: 'system', text: '🔔 THE DETECTIVE HAS SPOKEN. AND THEY\'RE RIGHT. 💀' },
+  { sender: 'Meera 💅', color: '#ec4899', text: '...' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'ok FINE' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'yes it was me' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'BUT in my defense' },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'here we go' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'i was on a call with sneha and i was telling her how i felt bad for jiya' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'and sahil was in the room and he OVERHEARD' },
+  { sender: 'Meera 💅', color: '#ec4899', text: "i didn't SEND anything. i SAID it. out loud. like a person. with a mouth." },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'is talking a crime now??' },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'meera. you literally said "ur secrets are safe with me pinky promise 🤞"' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'and they WERE safe' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'from my PHONE' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'my mouth is a separate department' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'i cannot control all departments at once 💅' },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'departments 💀' },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'MEERA' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'ok ok i\'m sorry 🥺' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'i really am' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'i wasn\'t trying to gossip i was genuinely worried about you' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'but i should\'ve just talked to YOU directly' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'i\'m sorry jiya 💖' },
   { sender: 'Jiya 🧸', color: '#eb5528', text: '...' },
-  { sender: 'Meera 💅', color: '#ec4899', text: "i understand if you're mad. you have every right to be." },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'meera.' },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: "i'm not mad." },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: "i'm hurt. yeah." },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: "but you told me yourself. you didn't hide it. you didn't let me find out from someone else." },
-  { sender: 'Meera 💅', color: '#ec4899', text: "i couldn't do that to you. you're my person 🥺" },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: "you're my person too idiot 😭💖" },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: "just... next time. keep it in the group. or tell me directly." },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'promise?' },
-  { sender: 'Meera 💅', color: '#ec4899', text: 'promise. real promise. not pinky promise. REAL. 💖' },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'i love you' },
-  { sender: 'Meera 💅', color: '#ec4899', text: 'i love you more 🥺💅' },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: "also tell sneha to control her boyfriend's ears" },
-  { sender: 'Meera 💅', color: '#ec4899', text: 'LMAOOO 😭😭' },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'you\'re lucky i love you idiot 😭💖' },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'so can i go back to sleep now' },
+  { sender: 'Meera 💅', color: '#ec4899', text: 'ARJUN' },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'what. the case is solved. i\'m tired.' },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'goodnight everyone' },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'also i want it on record that i was innocent the whole time' },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'remember this day. the day arjun did nothing wrong.' },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'that\'s literally every day you do nothing 😭' },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'exactly. consistent. 😎' },
+  { type: 'system', text: '🔔 case closed. you cracked it bestie. 🔍✨' },
 ];
 
-const NARRATOR_AFTERMATH = [
-  { type: 'system', text: '🔔 so. that happened at 1:30 AM.' },
-  { type: 'system', text: '🔔 three hours before you started your little investigation.' },
-  { type: 'system', text: '🔔 meera already confessed. jiya already forgave her.' },
-  { type: 'system', text: '🔔 they already handled it. like adults. like real friends.' },
-  { type: 'system', text: '🔔 and you? you spent the last 20 minutes playing detective 🔍' },
-  { type: 'system', text: '🔔 on a case that was already closed 💀' },
+// ═══════════════════════════════════════════════════════
+// WRONG ANSWER — JIYA 🧸
+// ═══════════════════════════════════════════════════════
+const JIYA_WRONG = [
+  { sender: 'Jiya 🧸', color: '#eb5528', text: 'ME??' },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: "i'm literally the VICTIM here 😭" },
+  { sender: 'Jiya 🧸', color: '#eb5528', text: "that's like accusing the pizza of eating itself" },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'lol' },
+  { type: 'system', text: '🔔 yeah... that\'s not it bestie 💀' },
+  { type: 'system', text: '🔔 let me walk you through what you missed.' },
 ];
 
-const FINAL_MESSAGES = [
-  { sender: 'Meera 💅', color: '#ec4899', text: 'so... are we done here detective? 💅' },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: "guys it's fine. seriously. me and meera sorted it out hours ago 🥺" },
-  { sender: 'Arjun 😎', color: '#64748b', text: 'wait so i got woken up from my nap for nothing??' },
-  { sender: 'Arjun 😎', color: '#64748b', text: 'i literally left my bed for this' },
-  { sender: 'Arjun 😎', color: '#64748b', text: 'i want compensation' },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'arjun 😭😭' },
-  { sender: 'Meera 💅', color: '#ec4899', text: "arjun you live on that bed. leaving it for 20 minutes won't kill you." },
-  { sender: 'Arjun 😎', color: '#64748b', text: "you don't know that. it might." },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'but also' },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'to whoever is reading this' },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'thank you for caring enough to investigate 🥺' },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'your heart was in the right place' },
-  { sender: 'Jiya 🧸', color: '#eb5528', text: 'even if the case was already solved lol' },
-  { sender: 'Meera 💅', color: '#ec4899', text: 'yeah bestie. you meant well. we know that 💖' },
-  { sender: 'Meera 💅', color: '#ec4899', text: "you're just a little late. fashionably late. like me. but for drama." },
-  { sender: 'Arjun 😎', color: '#64748b', text: 'can i go back to sleep now' },
-  { sender: 'Meera 💅', color: '#ec4899', text: 'yes arjun. you can go back to sleep.' },
-  { sender: 'Arjun 😎', color: '#64748b', text: 'finally 😴' },
+// ═══════════════════════════════════════════════════════
+// WRONG ANSWER — ARJUN 😎
+// ═══════════════════════════════════════════════════════
+const ARJUN_WRONG = [
+  { sender: 'Arjun 😎', color: '#64748b', text: 'bro' },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'i was asleep' },
+  { sender: 'Arjun 😎', color: '#64748b', text: "i'm literally always asleep" },
+  { sender: 'Arjun 😎', color: '#64748b', text: "i didn't even know jiya sent a message until today" },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'i have this group on mute for 1 year' },
+  { sender: 'Arjun 😎', color: '#64748b', text: 'ONE YEAR' },
+  { type: 'system', text: '🔔 yeah... that\'s not it bestie 💀' },
+  { type: 'system', text: '🔔 let me walk you through what you missed.' },
 ];
 
-const FINAL_SYSTEM = [
-  { type: 'system', text: '🔔 Arjun is now offline.' },
-  { type: 'system-narrator', text: '🔔 Of course he is.' },
+// ═══════════════════════════════════════════════════════
+// CLUES FOR PISHU'S PRIVATE CHAT (wrong answers)
+// ═══════════════════════════════════════════════════════
+export const JIYA_CLUES = [
+  "clue 1: meera's office gossip group. she said 'what happens in this group stays in this group' and then told the entire office. she literally has a track record. 👀",
+  "clue 2: meera's about says 'ur secrets are safe with me pinky promise 🤞'. that pinky promise lasted 48 hours last time. pattern bestie. pattern. 💀",
+  "clue 3: during interrogation meera said 'i have a feeling i know who did it.' she KNEW because SHE did it. she was testing if YOU knew. 💅",
+  "clue 4: meera has 3 documents shared in the group. 11 starred messages. 12 groups. she collects information like pokemon cards. 👀",
+  "meanwhile jiya? she begged people not to share her notes outside the college group. she RESPECTS boundaries. she would never leak her own vulnerable moment. 🥺",
+  "you got the wrong person but honestly the clues were tricky. want to replay and catch them this time? 🔍",
 ];
 
-export default function RevealChatThread({ chosenSuspect, isLight, colors, onComplete }) {
+export const ARJUN_CLUES = [
+  "clue 1: arjun's last seen was YESTERDAY. the leak happened at 2:45 AM today. he wasn't even online. he was in bed. like always. 😴",
+  "clue 2: arjun has shared 2 photos in the ENTIRE group history. this man doesn't engage. he definitely doesn't screenshot. that requires effort. 💀",
+  "clue 3: arjun has the group muted for 1 year. starred messages: 0. he doesn't care enough about this group to betray it. you need to care first to betray. 😭",
+  "clue 4: meera on the other hand has 11 starred messages, 3 documents, runs a gossip group, and broke a pinky promise in 48 hours. the evidence was RIGHT THERE bestie. 👀",
+  "you picked the sleepiest, most unbothered person in the group 😭 want to try again? 🔍",
+];
+
+export default function RevealChatThread({ chosenSuspect, isLight, colors, onComplete, onWrongAnswer }) {
   const [allItems, setAllItems] = useState([]);
   const [typing, setTyping] = useState(false);
   const [typingSender, setTypingSender] = useState(null);
+  const [scriptIndex, setScriptIndex] = useState(0);
   const endRef = useRef(null);
 
-  // Build the full script
-  const fullScript = [];
-  const reactions = REACTIONS[chosenSuspect] || REACTIONS['Jiya 🧸'];
-  reactions.forEach(m => fullScript.push({ ...m, type: 'msg' }));
-  NARRATOR_LINES.forEach(m => fullScript.push(m));
-  fullScript.push(DM_HEADER);
-  DM_MESSAGES.forEach(m => fullScript.push({ ...m, type: 'dm' }));
-  NARRATOR_AFTERMATH.forEach(m => fullScript.push(m));
-  FINAL_MESSAGES.forEach(m => fullScript.push({ ...m, type: 'msg' }));
-  FINAL_SYSTEM.forEach(m => fullScript.push(m));
+  const isCorrect = chosenSuspect === 'Meera 💅';
 
-  const [scriptIndex, setScriptIndex] = useState(0);
+  const fullScript = useMemo(() => {
+    if (isCorrect) return MEERA_CORRECT;
+    if (chosenSuspect === 'Jiya 🧸') return JIYA_WRONG;
+    return ARJUN_WRONG;
+  }, [chosenSuspect]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -128,14 +108,19 @@ export default function RevealChatThread({ chosenSuspect, isLight, colors, onCom
 
   useEffect(() => {
     if (scriptIndex >= fullScript.length) {
-      const t = setTimeout(() => { if (onComplete) onComplete(); }, 5000);
-      return () => clearTimeout(t);
+      if (isCorrect) {
+        const t = setTimeout(() => { if (onComplete) onComplete(); }, 5000);
+        return () => clearTimeout(t);
+      } else {
+        const t = setTimeout(() => { if (onWrongAnswer) onWrongAnswer(chosenSuspect); }, 2500);
+        return () => clearTimeout(t);
+      }
+      return;
     }
 
     const item = fullScript[scriptIndex];
-    const isSystem = item.type === 'system' || item.type === 'system-narrator' || item.type === 'dm-header';
-    const isDmHeader = item.type === 'dm-header';
-    const delay = isDmHeader ? 4000 : isSystem ? 3500 : (1800 + Math.random() * 1000);
+    const isSystem = item.type === 'system';
+    const delay = isSystem ? 3500 : (1800 + Math.random() * 1000);
 
     if (!isSystem) {
       setTyping(true);
@@ -158,9 +143,9 @@ export default function RevealChatThread({ chosenSuspect, isLight, colors, onCom
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', background: colors.bg, position: 'relative', overflow: 'hidden' }}>
       {/* Header */}
       <div style={{ padding: '12px 16px', background: isLight ? '#f0f2f5' : '#202c33', display: 'flex', alignItems: 'center', gap: 12, zIndex: 20, boxShadow: '0 1px 3px rgba(0,0,0,0.1)', borderBottom: isLight ? '1px solid #cbd5e1' : '1px solid #222e35' }}>
-        <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🔍</div>
+        <div style={{ width: 38, height: 38, borderRadius: '50%', background: isCorrect ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: `1px solid ${isCorrect ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{isCorrect ? '🎉' : '🔍'}</div>
         <div>
-          <h4 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: isLight ? '#111b21' : '#e9edef' }}>the reveal 🔍</h4>
+          <h4 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: isLight ? '#111b21' : '#e9edef' }}>{isCorrect ? 'case closed 🎉' : 'the reveal 🔍'}</h4>
           <span style={{ fontSize: 11, color: colors.dateText }}>Jiya 🧸, Arjun 😎, Meera 💅, You 🫵</span>
         </div>
       </div>
@@ -172,37 +157,15 @@ export default function RevealChatThread({ chosenSuspect, isLight, colors, onCom
         <div style={{ alignSelf: 'center', background: colors.dateBg, padding: '4px 10px', borderRadius: 8, fontSize: 11, color: colors.dateText, marginBottom: 10 }}>TODAY</div>
 
         {allItems.map((item) => {
-          if (item.type === 'system' || item.type === 'system-narrator') {
+          if (item.type === 'system') {
             return (
               <motion.div key={item.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                style={{ alignSelf: 'center', background: colors.dateBg, padding: '6px 14px', borderRadius: 8, fontSize: 12, color: item.type === 'system-narrator' ? '#fbbf24' : colors.dateText, fontStyle: item.type === 'system-narrator' ? 'italic' : 'normal', margin: '6px 0', textAlign: 'center', maxWidth: '85%' }}>
+                style={{ alignSelf: 'center', background: colors.dateBg, padding: '6px 14px', borderRadius: 8, fontSize: 12, color: item.text.includes('RIGHT') || item.text.includes('cracked') ? '#22c55e' : colors.dateText, fontWeight: item.text.includes('RIGHT') || item.text.includes('cracked') ? 600 : 400, margin: '6px 0', textAlign: 'center', maxWidth: '85%' }}>
                 {item.text}
               </motion.div>
             );
           }
 
-          if (item.type === 'dm-header') {
-            return (
-              <motion.div key={item.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                style={{ alignSelf: 'center', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', padding: '10px 16px', borderRadius: 12, fontSize: 12, color: '#ef4444', margin: '10px 0', textAlign: 'center', maxWidth: '90%', fontWeight: 600, lineHeight: 1.6, whiteSpace: 'pre-line' }}>
-                {item.text}
-              </motion.div>
-            );
-          }
-
-          if (item.type === 'dm') {
-            const isMeera = item.sender.includes('Meera');
-            return (
-              <motion.div key={item.id} initial={{ opacity: 0, x: isMeera ? -15 : 15 }} animate={{ opacity: 1, x: 0 }}
-                style={{ alignSelf: isMeera ? 'flex-start' : 'flex-end', maxWidth: '80%', background: isMeera ? (isLight ? '#fff' : '#202c33') : (isLight ? '#dcf8c6' : '#005c4b'), borderRadius: isMeera ? '0 8px 8px 8px' : '8px 0 8px 8px', padding: '6px 8px 2px', marginTop: 3, boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
-                <div style={{ fontSize: 11, fontWeight: 'bold', color: item.color, paddingBottom: 2 }}>{item.sender}</div>
-                <div style={{ fontSize: 13, color: isLight ? '#111b21' : '#e9edef' }}>{item.text}</div>
-                <div style={{ textAlign: 'right', fontSize: 10, color: colors.dateText, paddingTop: 2 }}>1:30 AM</div>
-              </motion.div>
-            );
-          }
-
-          // Regular group message
           return (
             <motion.div key={item.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
               style={{ alignSelf: 'flex-start', maxWidth: '80%', background: isLight ? '#fff' : '#202c33', borderRadius: '0 8px 8px 8px', padding: '6px 8px 2px', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', marginTop: 3 }}>
@@ -213,7 +176,6 @@ export default function RevealChatThread({ chosenSuspect, isLight, colors, onCom
           );
         })}
 
-        {/* Typing indicator */}
         {typing && typingSender && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             style={{ alignSelf: 'flex-start', background: isLight ? '#fff' : '#202c33', borderRadius: '0 8px 8px 8px', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>

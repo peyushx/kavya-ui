@@ -157,37 +157,6 @@ export function GroupPreviewInfoView({ activeGroup, isLight, colors, onClose, on
         </p>
       </div>
 
-      {/* Options */}
-      {favourites && onToggleFavourite && (
-        <div style={{
-          borderBottom: isLight ? '8px solid #f0f2f5' : '8px solid #0c1317',
-          padding: '6px 0',
-          background: isLight ? '#ffffff' : '#111b21',
-        }}>
-          <div 
-            onClick={() => onToggleFavourite(activeGroup.id)}
-            style={{ 
-              padding: '12px 16px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '20px', 
-              cursor: 'pointer', 
-              color: isLight ? '#111b21' : '#e9edef' 
-            }}
-          >
-            <span style={{ 
-              opacity: 0.6, 
-              display: 'flex', 
-              color: favourites.includes(activeGroup.id) ? '#ef4444' : 'inherit' 
-            }}>
-              <Heart size={20} fill={favourites.includes(activeGroup.id) ? '#ef4444' : 'none'} />
-            </span>
-            <span style={{ fontSize: '13.5px', fontWeight: 500 }}>
-              {favourites.includes(activeGroup.id) ? 'Remove from favourites' : 'Add to favourites'}
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* Members List */}
       <div style={{

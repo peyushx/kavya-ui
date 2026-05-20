@@ -9,7 +9,7 @@ import ContactInfoView from './ContactInfoView';
 import GroupPreviewThread from './GroupPreviewThread';
 import { GroupPreviewInfoView } from './GroupPreviewInfoView';
 import PrivateDmView from './PrivateDmView';
-import RevealChatThread from './RevealChatThread';
+import RevealChatThread, { JIYA_CLUES, ARJUN_CLUES } from './RevealChatThread';
 export default function WhatsAppUI({ theme, onNext }) {
   const isLight = theme === 'light';
   
@@ -128,7 +128,7 @@ export default function WhatsAppUI({ theme, onNext }) {
     if (exploredSuspects.length === 3 && !narratorDmAlertTriggered) {
       const alertMsg = {
         id: 'pishu-alert-1',
-        sender: 'Pishu',
+        sender: 'Pishu ✨',
         type: 'text',
         text: "ok you've done your research. now let's hear what they have to say. tap on anyone to DM them privately 💬",
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -158,7 +158,7 @@ export default function WhatsAppUI({ theme, onNext }) {
         setTimeout(() => {
           const finalMsg = {
             id: 'pishu-alert-2',
-            sender: 'Pishu',
+            sender: 'Pishu ✨',
             type: 'text',
             text: "you've seen the profiles. you've read the evidence. you've heard their side. time to make your call.",
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -235,9 +235,26 @@ export default function WhatsAppUI({ theme, onNext }) {
         setInputText('');
 
         setTimeout(() => {
-          setMessages(prev => prev.filter(m => m.id !== tempId));
-          showTypingToast("this is a crime scene bestie. you don't get to talk. you OBSERVE 🔍");
-        }, 500);
+          // Mark the message as deleted by admin
+          setMessages(prev => prev.map(m => m.id === tempId ? { ...m, deleted: true } : m));
+          
+          // Trigger Pishu's typing animation
+          setNarratorTyping(true);
+
+          setTimeout(() => {
+            setNarratorTyping(false);
+            const pishuMsg = {
+              id: `pishu-${Date.now()}`,
+              sender: 'Pishu ✨',
+              type: 'text',
+              text: "this is a crime scene bestie. you don't get to talk. you OBSERVE 🔍",
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              senderColor: '#34b7f1',
+              isIncoming: true
+            };
+            setMessages(prev => [...prev, pishuMsg]);
+          }, 2000);
+        }, 1200);
       } 
       else if (nextAttempt === 2) {
         setIsShakingInput(true);
@@ -349,7 +366,7 @@ export default function WhatsAppUI({ theme, onNext }) {
         const timer = setTimeout(() => {
           const initMsg = {
             id: 'pishu-initial-detective-hat',
-            sender: 'Pishu',
+            sender: 'Pishu ✨',
             type: 'text',
             text: "Alright baddie, time to put on your detective hat 🕵️‍♀️. Tap the group info above and stalk every single member. Check their bios. Check their last seens. Find out who leaked it. Trust NO ONE. 💅",
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -423,7 +440,7 @@ export default function WhatsAppUI({ theme, onNext }) {
     },
     {
       id: 'pishu-chat',
-      name: 'Pishu',
+      name: 'Pishu ✨',
       message: pishuMessages[pishuMessages.length - 1]?.text || 'Tap to chat privately',
       time: pishuMessages[pishuMessages.length - 1]?.time || '',
       avatar: '🕵️‍♂️',
@@ -492,6 +509,8 @@ export default function WhatsAppUI({ theme, onNext }) {
     });
   }
 
+  const [showReplay, setShowReplay] = useState(false);
+
   const handleVerdictSelection = (suspectName) => {
     const userMsg = {
       id: `pishu-verdict-user-${Date.now()}`,
@@ -504,14 +523,16 @@ export default function WhatsAppUI({ theme, onNext }) {
     setPishuMessages(prev => [...prev, userMsg]);
     setNarratorTyping(true);
 
+    const isCorrect = suspectName === 'Meera 💅';
+
     setTimeout(() => {
       setNarratorTyping(false);
       const conclusionMsg = {
         id: `pishu-verdict-reply-${Date.now()}`,
-        sender: 'Pishu',
-        text: 'let\'s see what really happened.',
+        sender: 'Pishu ✨',
+        text: isCorrect ? 'YOU GOT IT 🎉🎉🎉' : 'hmm. let\'s see about that...',
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        senderColor: '#ef4444',
+        senderColor: isCorrect ? '#22c55e' : '#ef4444',
         isIncoming: true
       };
       setPishuMessages(prev => [...prev, conclusionMsg]);
@@ -522,6 +543,30 @@ export default function WhatsAppUI({ theme, onNext }) {
         setActiveDmSuspect(null);
       }, 2000);
     }, 1800);
+  };
+
+  const handleWrongAnswer = (suspectName) => {
+    const clues = suspectName === 'Jiya 🧸' ? JIYA_CLUES : ARJUN_CLUES;
+    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    const clueMessages = clues.map((text, i) => ({
+      id: `pishu-clue-${Date.now()}-${i}`,
+      sender: 'Pishu ✨',
+      text,
+      time: now,
+      senderColor: '#ef4444',
+      isIncoming: true
+    }));
+
+    setPishuMessages(prev => [...prev, ...clueMessages]);
+    localStorage.setItem('kavvs_pishu_unread', 'true');
+    setActiveChatId('pishu');
+    setShowReplay(true);
+  };
+
+  const handleReplay = () => {
+    setRevealSuspect(null);
+    setShowReplay(false);
   };
 
   return (
@@ -617,6 +662,7 @@ export default function WhatsAppUI({ theme, onNext }) {
           isLight={isLight}
           colors={colors}
           onComplete={() => { if (onNext) onNext(); }}
+          onWrongAnswer={handleWrongAnswer}
         />
       ) : activeDmSuspect ? (
         <PrivateDmView
@@ -656,6 +702,8 @@ export default function WhatsAppUI({ theme, onNext }) {
           activeChatId={activeChatId}
           verdictOptions={activeChatId === 'pishu' && completedDms.length === 3 && !revealSuspect ? ['Jiya 🧸', 'Arjun 😎', 'Meera 💅'] : null}
           onVerdictSelect={handleVerdictSelection}
+          showReplay={activeChatId === 'pishu' && showReplay}
+          onReplay={handleReplay}
         />
       )}
 

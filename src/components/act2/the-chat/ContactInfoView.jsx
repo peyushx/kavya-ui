@@ -48,6 +48,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           desc: 'Mom, Dad, Jiya...', 
           membersCount: 3,
           narratorComment: "good morning is a feeling. jiya's dad is a philosopher 💀",
+          viewingContact: 'Jiya',
           messages: [
             { sender: "Jiya's Mom", text: "beta aaj dinner kya banana hai", time: "8:45 PM" },
             { sender: "Jiya", text: "mummy i told you na pasta", time: "8:46 PM" },
@@ -66,6 +67,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           desc: 'Jiya, Random guy, Girl...', 
           membersCount: 34,
           narratorComment: "43 pages. color coded. extra references. 3 weeks. one 'thanks.' 😭",
+          viewingContact: 'Jiya',
           messages: [
             { sender: "Random guy", text: "does anyone have unit 4 notes", time: "2:10 PM" },
             { sender: "Girl", text: "bro exam is literally tomorrow", time: "2:12 PM" },
@@ -120,6 +122,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           desc: 'Arjun, Karan, Dev...', 
           membersCount: 6,
           narratorComment: "7th time's the charm 😭",
+          viewingContact: 'Arjun',
           messages: [
             { sender: "Karan", text: "gym tomorrow 6am?", time: "10:15 PM" },
             { sender: "Dev", text: "let's go bro 💪", time: "10:17 PM" },
@@ -139,6 +142,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           desc: 'Arjun, Sam, Karan...', 
           membersCount: 8,
           narratorComment: "emotional lag. noted. 💀",
+          viewingContact: 'Arjun',
           messages: [
             { sender: "Arjun", text: "this is my year. i can feel it.", time: "4:00 PM" },
             { sender: "Sam", text: "bro you say that every year", time: "4:02 PM" },
@@ -159,6 +163,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           desc: 'Arjun, Vikram...', 
           membersCount: 3,
           narratorComment: "installment plan for rent 😎 this man is something else",
+          viewingContact: 'Arjun',
           messages: [
             { sender: "Vikram", text: "bro rent is due", time: "11:00 AM" },
             { sender: "Arjun", text: "yeah bro i'll send tomorrow", time: "11:15 AM" },
@@ -213,6 +218,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           desc: 'Meera, Pjiya, Ananya...', 
           membersCount: 5,
           narratorComment: "reading comprehension is free 💀",
+          viewingContact: 'Meera',
           messages: [
             { sender: "Meera", text: "ok saturday girls night. no boyfriends. no excuses. no cancelling.", time: "6:00 PM" },
             { sender: "Pjiya", text: "i'm in!!", time: "6:02 PM" },
@@ -232,6 +238,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           desc: 'Meera, Sneha, Tanya...', 
           membersCount: 4,
           narratorComment: "pinky promise 🤞 lasted 48 hours. impressive for meera honestly",
+          viewingContact: 'Meera',
           messages: [
             { sender: "Meera", text: "ok so apparently rahul from marketing is dating pjiya from HR", time: "11:30 AM" },
             { sender: "Sneha", text: "NO WAY", time: "11:32 AM" },
@@ -257,6 +264,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           desc: 'Meera, Girl...', 
           membersCount: 7,
           narratorComment: "insane but moisturized. honestly life goals 🧴",
+          viewingContact: 'Meera',
           messages: [
             { sender: "Meera", text: "ok the ordinary niacinamide changed my life", time: "1:00 PM" },
             { sender: "Girl", text: "meera you say that about every product", time: "1:02 PM" },
@@ -274,6 +282,7 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           desc: "Meera, Ananya, Sneha...", 
           membersCount: 5,
           narratorComment: "4 people read it. 0 replied. meera if you're reading this i'll come to your party 🥺",
+          viewingContact: 'Meera',
           messages: [
             { sender: "Meera", text: "ok so for MY birthday i was thinking", time: "12:00 PM" },
             { sender: "Meera", text: "rooftop dinner", time: "12:01 PM" },
@@ -619,18 +628,6 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
               only 1 group in common. interesting.
             </div>
           )}
-          {profile.isNarrator && (
-            <div style={{
-              padding: '12px 16px 16px 16px',
-              fontSize: '11.5px',
-              color: '#ef4444',
-              fontStyle: 'italic',
-              fontWeight: 600,
-              borderTop: isLight ? '1px solid #f0f2f5' : '1px solid #222e35'
-            }}>
-              wait, why is the narrator registered as a participant inside this chat group?! 🕵️‍♂️💀
-            </div>
-          )}
         </div>
 
         {/* Encryption Warning (Crucial BOMBSHELL clue for YOU 🫵) */}
@@ -647,10 +644,6 @@ export default function ContactInfoView({ memberName, isLight, colors, onClose, 
           {profile.isYou ? (
             <span style={{ fontSize: '11.5px', color: '#ef4444', lineHeight: '1.4', fontWeight: 600, border: '1px dashed rgba(239,68,68,0.3)', padding: '6px 12px', borderRadius: '8px' }}>
               Encryption: Messages are end-to-end encrypted. Except the ones you forwarded 📤
-            </span>
-          ) : profile.isNarrator ? (
-            <span style={{ fontSize: '11.5px', color: '#ef4444', lineHeight: '1.4', fontWeight: 600, border: '1px dashed rgba(239,68,68,0.3)', padding: '6px 12px', borderRadius: '8px' }}>
-              Warning: You are viewing a secure system line. Pishu has full administrative read rights. 🚨🗝️
             </span>
           ) : (
             <span style={{ fontSize: '10.5px', color: colors.dateText, lineHeight: '1.4' }}>

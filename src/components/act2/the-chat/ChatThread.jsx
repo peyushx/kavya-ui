@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, Video, Search, Smile, Paperclip, Lock, Send, Mic, 
-  Camera, Image, FileText, MapPin, User, X, Info, AlertTriangle, PhoneCall, MessageCircle 
+  Camera, Image, FileText, MapPin, User, X, Info, AlertTriangle, PhoneCall, MessageCircle, Ban 
 } from 'lucide-react';
 
 export default function ChatThread({
@@ -29,7 +29,9 @@ export default function ChatThread({
   onStartSuspectDm,
   activeChatId = 'besties',
   verdictOptions,
-  onVerdictSelect
+  onVerdictSelect,
+  showReplay,
+  onReplay
 }) {
   const [attachmentTapCount, setAttachmentTapCount] = useState(() => {
     return Number(localStorage.getItem('kavvs_attachment_tap_count') || '0');
@@ -125,7 +127,7 @@ export default function ChatThread({
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: isLight ? '#111b21' : '#e9edef' }}>
-              {activeChatId === 'pishu' ? 'Pishu' : 'besties only 💀🫶'}
+              {activeChatId === 'pishu' ? 'Pishu ✨' : 'besties only 💀🫶'}
             </h4>
             <span style={{ fontSize: '11px', color: colors.dateText }}>
               {activeChatId === 'pishu' ? 'online · secure narrator line' : 'Jiya 🧸, Arjun 😎, Meera 💅, You 🫵'}
@@ -312,6 +314,44 @@ export default function ChatThread({
                 <div style={{ textAlign: 'right', fontSize: '10px', color: colors.dateText, padding: '0 8px 4px 0' }}>
                   {msg.time}
                 </div>
+              </motion.div>
+            );
+          }
+
+          if (msg.deleted) {
+            return (
+              <motion.div
+                key={msg.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                style={{
+                  alignSelf: msg.isIncoming ? 'flex-start' : 'flex-end',
+                  maxWidth: '80%',
+                  background: msg.isIncoming 
+                    ? (isLight ? '#f0f2f5' : '#202c33') 
+                    : (isLight ? '#dcf8c6' : '#005c4b'),
+                  borderRadius: msg.isIncoming ? '0 8px 8px 8px' : '8px 0 8px 8px',
+                  padding: '6px 12px 6px 10px',
+                  boxShadow: '0 1px 1px rgba(0,0,0,0.08)',
+                  marginTop: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  opacity: 0.8
+                }}
+              >
+                <Ban size={14} style={{ color: isLight ? '#8696a0' : '#8696a0' }} />
+                <span style={{ 
+                  fontSize: '13.5px', 
+                  fontStyle: 'italic', 
+                  color: isLight ? '#667781' : '#8696a0',
+                  userSelect: 'none'
+                }}>
+                  This message was deleted by admin
+                </span>
+                <span style={{ fontSize: '9px', color: colors.dateText, marginLeft: '8px', alignSelf: 'flex-end', paddingTop: '4px' }}>
+                  {msg.time}
+                </span>
               </motion.div>
             );
           }
@@ -1105,6 +1145,43 @@ export default function ChatThread({
               </motion.button>
             ))}
           </div>
+        </div>
+      ) : showReplay ? (
+        <div style={{
+          padding: '16px 20px',
+          background: isLight ? '#f0f2f5' : '#202c33',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          zIndex: 20,
+          borderTop: isLight ? '1px solid #cbd5e1' : '1px solid #222e35',
+          fontFamily: "'Outfit', sans-serif",
+          alignItems: 'center'
+        }}>
+          <span style={{ fontSize: '12px', color: '#ef4444', fontWeight: 600 }}>wrong answer! want to try again? 💀</span>
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => onReplay && onReplay()}
+            style={{
+              width: '100%',
+              background: 'linear-gradient(135deg, #00a884 0%, #25d366 100%)',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '12px 20px',
+              color: 'white',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              boxShadow: '0 2px 8px rgba(0,168,132,0.3)'
+            }}
+          >
+            🔄 Replay Investigation
+          </motion.button>
         </div>
       ) : activeChatId === 'pishu' ? (
         <div 

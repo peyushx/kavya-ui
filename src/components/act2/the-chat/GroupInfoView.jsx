@@ -314,22 +314,6 @@ export default function GroupInfoView({ colors, isLight, setView, onNext, isFavo
         ))}
       </div>
 
-      {/* Options */}
-      <div style={{
-        borderBottom: isLight ? '8px solid #f0f2f5' : '8px solid #0c1317',
-        padding: '6px 0',
-      }}>
-        <div 
-          onClick={() => setIsFavourite(!isFavourite)}
-          style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '20px', cursor: 'pointer', color: isLight ? '#111b21' : '#e9edef' }}>
-          <span style={{ opacity: 0.6, display: 'flex', color: isFavourite ? '#ef4444' : 'inherit' }}>
-            <Heart size={20} fill={isFavourite ? '#ef4444' : 'none'} />
-          </span>
-          <span style={{ fontSize: '13.5px', fontWeight: 500 }}>
-            {isFavourite ? 'Remove from favourites' : 'Add to favourites'}
-          </span>
-        </div>
-      </div>
 
       {/* Act Progression Interrogation Status Button */}
       <div style={{
