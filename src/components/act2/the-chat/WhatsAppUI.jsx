@@ -258,11 +258,7 @@ export default function WhatsAppUI({ theme, onNext }) {
           localStorage.setItem('kavvs_pishu_unread', 'true');
         }
 
-        // Trigger Pishu's typing animation
-        setNarratorTyping(true);
-
         setTimeout(() => {
-          setNarratorTyping(false);
 
           let replyText = "";
           if (nextAttempt === 1) {
@@ -445,8 +441,8 @@ export default function WhatsAppUI({ theme, onNext }) {
     { 
       id: 'active',
       name: localStorage.getItem('kavvs_group_name') || 'besties only 💀🫶', 
-      message: messages[messages.length - 1]?.text || 'guys someone sent this to me... is this true?!', 
-      time: messages[messages.length - 1]?.time || '10:14 AM', 
+      message: [...messages].reverse().find(m => !m.deleted)?.text || 'guys someone sent this to me... is this true?!', 
+      time: [...messages].reverse().find(m => !m.deleted)?.time || '10:14 AM', 
       avatar: '👥', 
       color: '#0d9488', 
       isGroup: true, 
